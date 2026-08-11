@@ -1,0 +1,17 @@
+{
+  "_note": "Map logical asset names to Firebase Storage URLs. Run scripts/upload-assets.mjs to populate.",
+  "hero-aquamarine": "",
+  "hero-tourmaline": "",
+  "hero-rubylite": "",
+  "hero-morganite": "",
+  "hero-spessartite": "",
+  "hero-beryl": "",
+  "about-hero": "",
+  "about-inspection": "",
+  "aq-01": "",
+  "aq-02": "",
+  "aq-03": "",
+  "aq-04": "",
+  "aq-05": "",
+  "aq-06": ""
+}

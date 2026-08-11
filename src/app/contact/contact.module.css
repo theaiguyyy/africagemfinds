@@ -1,0 +1,309 @@
+/* §6.13 Contact form field cascade — CSS animation (Strict-Mode-safe) */
+@keyframes fieldReveal {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+:global(.field-cascade) {
+  animation: fieldReveal 0.8s cubic-bezier(0.215, 0.61, 0.355, 1) 0.3s both;
+}
+:global(.field-cascade:nth-child(2)) { animation-delay: 0.4s; }
+:global(.field-cascade:nth-child(3)) { animation-delay: 0.5s; }
+:global(.field-cascade:nth-child(4)) { animation-delay: 0.6s; }
+:global(.field-cascade:nth-child(5)) { animation-delay: 0.7s; }
+
+/* ── HERO ── */
+.hero {
+  position: relative;
+  padding: 160px max(24px, calc((100vw - 1120px) / 2)) 80px;
+  overflow: hidden;
+  min-height: 420px;
+  display: flex;
+  align-items: flex-end;
+}
+
+.heroBg {
+  position: absolute;
+  inset: 0;
+  background: var(--bg-alt);
+  z-index: 0;
+}
+
+.heroContent {
+  position: relative;
+  z-index: 1;
+  max-width: 640px;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--ink-soft);
+  margin-bottom: 24px;
+}
+
+.breadcrumb a {
+  color: var(--ink-soft);
+  text-decoration: none;
+}
+
+.breadcrumb a:hover {
+  color: var(--ink);
+}
+
+.breadcrumb span {
+  color: var(--line);
+}
+
+.heroContent h1 {
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-size: clamp(2.4rem, 5vw, 3.8rem);
+  font-weight: 300;
+  line-height: 1.12;
+  color: var(--ink);
+  margin-bottom: 20px;
+}
+
+.heroContent p {
+  font-size: clamp(1rem, 2vw, 1.15rem);
+  color: var(--ink-soft);
+  line-height: 1.7;
+}
+
+.accent {
+  color: var(--blue);
+  font-style: italic;
+}
+
+/* ── MAIN GRID ── */
+.main {
+  padding: 80px 0 120px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 80px;
+  align-items: start;
+}
+
+/* ── FORM ── */
+.formCol {}
+
+.formTitle {
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-size: clamp(1.6rem, 3vw, 2.1rem);
+  font-weight: 300;
+  color: var(--ink);
+  margin: 12px 0 32px;
+  line-height: 1.25;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.fieldWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.fieldWrap label {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  color: var(--ink);
+  text-transform: uppercase;
+}
+
+.fieldWrap input,
+.fieldWrap textarea,
+.fieldWrap select {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1.5px solid var(--line);
+  border-radius: 3px;
+  background: var(--bg);
+  color: var(--ink);
+  font-size: 1rem;
+  font-family: inherit;
+  line-height: 1.5;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+  appearance: none;
+}
+
+.fieldWrap input:focus,
+.fieldWrap textarea:focus,
+.fieldWrap select:focus {
+  outline: none;
+  border-color: var(--blue);
+}
+
+.fieldWrap textarea {
+  resize: vertical;
+  min-height: 140px;
+}
+
+.submitBtn {
+  width: 100%;
+  padding: 16px;
+  font-size: 1rem;
+}
+
+.errorMsg {
+  color: var(--ruby);
+  font-size: 0.9rem;
+  margin-top: 8px;
+}
+
+/* ── SUCCESS STATE ── */
+.success {
+  text-align: center;
+  padding: 64px 40px;
+  border: 1.5px solid var(--line);
+  border-radius: 4px;
+}
+
+.successIcon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--green);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  margin: 0 auto 20px;
+}
+
+.success h3 {
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-size: 1.6rem;
+  font-weight: 300;
+  color: var(--ink);
+  margin-bottom: 12px;
+}
+
+.success p {
+  color: var(--ink-soft);
+  line-height: 1.7;
+  margin-bottom: 28px;
+}
+
+/* ── SIDEBAR ── */
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  position: sticky;
+  top: 100px;
+}
+
+.contactCard {
+  padding: 32px 28px;
+  border: 1.5px solid var(--line);
+  border-radius: 4px;
+  background: var(--bg-alt);
+}
+
+.contactCard h3 {
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-size: 1.15rem;
+  font-weight: 400;
+  color: var(--ink);
+  margin: 12px 0 10px;
+  line-height: 1.3;
+}
+
+.contactCard p {
+  font-size: 0.95rem;
+  color: var(--ink-soft);
+  line-height: 1.7;
+  margin-bottom: 20px;
+}
+
+.socialLinks {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.socialLink {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 3px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.socialLink:hover {
+  border-color: var(--blue);
+  background: rgba(30,111,160,0.04);
+}
+
+.address {
+  font-style: normal;
+  font-size: 0.95rem;
+  color: var(--ink-soft);
+  line-height: 1.75;
+  margin: 12px 0 16px;
+}
+
+.mapLink {
+  color: var(--blue);
+  font-size: 0.9rem;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.mapLink:hover {
+  text-decoration: underline;
+}
+
+.emailCard {
+  background: var(--ink);
+  border-color: transparent;
+}
+
+.emailCard .eyebrow {
+  color: rgba(239,230,210,0.5) !important;
+}
+
+.emailLink {
+  display: block;
+  margin-top: 12px;
+  color: #EFE6D2;
+  font-size: 1rem;
+  text-decoration: none;
+  font-weight: 500;
+  word-break: break-all;
+}
+
+.emailLink:hover {
+  text-decoration: underline;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 960px) {
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 56px;
+  }
+
+  .sidebar {
+    position: static;
+  }
+}

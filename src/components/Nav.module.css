@@ -1,0 +1,122 @@
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 28px 44px;
+  transition: background .4s ease, padding .4s ease, box-shadow .4s ease;
+}
+
+.scrolled {
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(10px);
+  padding: 16px 44px !important;
+  box-shadow: 0 1px 0 var(--line);
+}
+
+.navLogo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'Fraunces', serif;
+  font-size: 19px;
+  color: #fff;
+  transition: color .4s ease;
+}
+
+.scrolled .navLogo {
+  color: var(--ink);
+}
+
+.dots {
+  display: flex;
+  gap: 3px;
+}
+
+.dots span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.navLinks {
+  display: flex;
+  align-items: center;
+  gap: 36px;
+  list-style: none;
+}
+
+.navLinks a {
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.88);
+  transition: color .4s ease, opacity .2s ease;
+}
+
+.scrolled .navLinks a {
+  color: var(--ink-soft);
+}
+
+.navLinks a.current {
+  color: #fff;
+}
+
+.scrolled .navLinks a.current {
+  color: var(--ink);
+}
+
+.navLinks a:not(.navCta):hover {
+  opacity: .65;
+}
+
+.navCta {
+  font-size: 12.5px !important;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-weight: 600 !important;
+  color: #fff !important;
+  background: var(--blue);
+  padding: 11px 22px;
+  border-radius: 2px;
+  transition: background .25s ease;
+}
+
+.navCta:hover {
+  background: var(--green);
+  opacity: 1 !important;
+}
+
+.current {
+  color: #fff;
+}
+
+/* Sticky nav variant (non-transparent pages) */
+.stickyNav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 26px 44px;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--line);
+}
+
+.stickyNav .navLogo { color: var(--ink); }
+.stickyNav .navLinks a { color: var(--ink-soft); }
+.stickyNav .navLinks a.current { color: var(--ink); }
+.stickyNav .navLinks a:not(.navCta):hover { color: var(--ink); opacity: 1; }
+
+@media (max-width: 1000px) {
+  .navLinks { display: none; }
+  .nav { padding: 20px 22px; }
+  .scrolled { padding: 14px 22px !important; }
+}

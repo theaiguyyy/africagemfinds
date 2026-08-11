@@ -1,0 +1,54 @@
+.breadcrumb { padding: 24px 0 0; font-size: 11.5px; color: var(--ink-soft); display: flex; gap: 8px; }
+.breadcrumb a:hover { color: var(--blue); }
+.current { color: var(--ink); }
+
+.head { padding: 30px 0 60px; }
+.head h1 { font-size: clamp(36px, 4.6vw, 56px); font-style: italic; line-height: 1.08; margin-top: 14px; max-width: 720px; }
+.head p { font-size: 15.5px; color: var(--ink-soft); line-height: 1.85; max-width: 520px; margin-top: 20px; }
+
+.featured { position: relative; display: block; height: 64vh; min-height: 440px; overflow: hidden; margin-bottom: 80px; }
+.featured > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s ease; }
+.featured:hover > img { transform: scale(1.04); }
+.featuredScrim { position: absolute; inset: 0; background: linear-gradient(0deg, rgba(8,8,7,.88) 0%, rgba(8,8,7,.1) 55%); }
+.featuredCopy { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; padding: 0 44px 50px; max-width: 1280px; margin: 0 auto; color: #fff; }
+.featuredTag { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: #EFE6D2; margin-bottom: 14px; }
+.featuredCopy h2 { font-size: clamp(26px, 3.4vw, 42px); font-style: italic; max-width: 760px; line-height: 1.2; }
+.featuredCopy p { margin-top: 16px; font-size: 14.5px; color: rgba(255,255,255,.82); max-width: 560px; }
+.featuredMeta { margin-top: 20px; font-size: 11.5px; color: rgba(255,255,255,.65); display: flex; gap: 16px; }
+
+.posts { padding: 0; }
+.postsHead { padding-bottom: 44px; display: flex; justify-content: space-between; align-items: flex-end; gap: 30px; }
+.postsHead h3 { font-size: 24px; font-style: italic; }
+.filterRow { display: flex; font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: var(--ink-soft); }
+.filterRow span { padding: 0 14px; border-left: 1px solid var(--line); cursor: pointer; }
+.filterRow span:first-child { padding-left: 0; border-left: none; }
+.filterRow .active { color: var(--ink); }
+.postGrid { display: grid; grid-template-columns: repeat(3, 1fr); }
+.postCard { position: relative; aspect-ratio: 1/1.05; overflow: hidden; cursor: pointer; background: var(--ink); }
+.postCard > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 1.1s cubic-bezier(.16,1,.3,1), filter .6s ease; filter: saturate(1.05) brightness(.92); }
+.postCard:hover > img { transform: scale(1.08); filter: saturate(1.15) brightness(.55); }
+.postScrim { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(10,10,8,0) 40%, rgba(10,10,8,.86) 100%); }
+.postLabel { position: absolute; left: 24px; right: 24px; bottom: 22px; z-index: 2; color: #fff; }
+.postTag { font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 10px; display: block; }
+.postTitle { font-family: var(--font-fraunces), Georgia, serif; font-style: italic; font-size: 19px; line-height: 1.32; }
+.postMeta { margin-top: 12px; font-size: 10.5px; color: rgba(255,255,255,.65); display: flex; gap: 12px; }
+
+.ctaBand { padding: 100px 44px; max-width: 1280px; margin: 0 auto; }
+.catCta { padding: 52px 44px; background: linear-gradient(120deg, var(--blue) 0%, var(--green) 100%); display: flex; justify-content: space-between; align-items: center; gap: 30px; flex-wrap: wrap; }
+.catCta h3 { font-size: 23px; font-style: italic; max-width: 440px; color: #fff; }
+.catCta p { font-size: 13.5px; color: rgba(255,255,255,.82); margin-top: 6px; max-width: 440px; }
+.catCta :global(.btn-primary) { background: #fff; color: var(--ink); }
+.catCta :global(.btn-primary:hover) { background: var(--ink); color: #fff; }
+
+@media (max-width: 1000px) {
+  .postGrid { grid-template-columns: repeat(2, 1fr); }
+  .ctaBand { padding-left: 22px; padding-right: 22px; }
+  .featuredCopy { padding-left: 22px; padding-right: 22px; }
+  .catCta { padding: 34px 26px; }
+}
+
+@media (max-width: 620px) {
+  .postGrid { grid-template-columns: 1fr; }
+  .postsHead { align-items: flex-start; flex-direction: column; }
+  .filterRow { flex-wrap: wrap; row-gap: 10px; }
+}

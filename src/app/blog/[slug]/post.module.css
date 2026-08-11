@@ -1,0 +1,51 @@
+.progressBar { position: fixed; top: 0; left: 0; right: 0; height: 3px; background: var(--blue); transform-origin: left; z-index: 1000; pointer-events: none; }
+.narrow { max-width: 740px; margin: 0 auto; }
+.breadcrumb { padding: 24px 0 0; font-size: 11.5px; color: var(--ink-soft); display: flex; gap: 8px; flex-wrap: wrap; }
+.breadcrumb a:hover { color: var(--blue); }
+.current { color: var(--ink); }
+
+.artHead { padding: 30px 0 44px; text-align: center; }
+.artHead :global(.eyebrow) { justify-content: center; }
+.artHead h1 { font-size: clamp(30px, 4.4vw, 50px); font-style: italic; line-height: 1.15; margin-top: 16px; }
+.artMeta { margin-top: 22px; font-size: 12px; color: var(--ink-soft); display: flex; gap: 16px; justify-content: center; }
+
+.artHero { position: relative; height: 56vh; min-height: 380px; overflow: hidden; margin-bottom: 70px; }
+.artHero img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+
+.artBody { padding-bottom: 80px; }
+.artBody p { font-size: 16.5px; color: var(--ink-soft); line-height: 2; margin-bottom: 24px; }
+.artBody h2 { font-size: 25px; font-style: italic; margin: 50px 0 18px; }
+.num { font-style: normal; font-size: 14px; color: var(--blue); margin-right: 12px; }
+.artBody ul { margin: 0 0 24px; padding: 0; list-style: none; }
+.artBody li { font-size: 15.5px; color: var(--ink-soft); line-height: 1.8; padding: 11px 0 11px 24px; border-top: 1px solid var(--line); position: relative; }
+.artBody li:last-child { border-bottom: 1px solid var(--line); }
+.artBody li::before { content: ''; position: absolute; left: 0; top: 20px; width: 6px; height: 6px; border-radius: 50%; background: var(--blue); }
+.pull { margin: 46px 0; padding: 30px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); font-family: var(--font-fraunces), Georgia, serif; font-style: italic; font-size: 25px; line-height: 1.55; color: var(--ink); }
+.inlinePhoto { margin: 46px -44px; }
+.inlinePhoto img { width: 100%; }
+.inlinePhoto figcaption { margin-top: 12px; padding: 0 44px; font-size: 11.5px; color: var(--ink-soft); }
+
+.artCta { padding: 46px; background: linear-gradient(120deg, var(--blue) 0%, var(--green) 100%); text-align: center; margin-top: 54px; }
+.artCta h3 { font-size: 22px; font-style: italic; color: #fff; }
+.artCta p { margin-top: 10px; font-size: 14px; color: rgba(255,255,255,.85); }
+.artCta :global(.btn) { margin-top: 22px; background: #fff; color: var(--ink); }
+.artCta :global(.btn:hover) { background: var(--ink); color: #fff; }
+
+.related { padding: 0; margin-top: 100px; }
+.relatedHead { padding: 0 44px 40px; max-width: 1280px; margin: 0 auto; }
+.relatedHead h3 { font-size: 22px; font-style: italic; }
+.relatedGrid { display: grid; grid-template-columns: repeat(3, 1fr); }
+.relatedCard { position: relative; aspect-ratio: 4/3.4; overflow: hidden; cursor: pointer; background: var(--ink); }
+.relatedCard > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 1.1s cubic-bezier(.16,1,.3,1), filter .6s ease; filter: saturate(1.05) brightness(.92); }
+.relatedCard:hover > img { transform: scale(1.08); filter: saturate(1.15) brightness(.55); }
+.relatedScrim { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(10,10,8,0) 40%, rgba(10,10,8,.86) 100%); }
+.relatedLabel { position: absolute; left: 22px; right: 22px; bottom: 20px; z-index: 2; color: #fff; }
+.relatedTag { font-size: 10px; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 8px; display: block; }
+.relatedTitle { font-family: var(--font-fraunces), Georgia, serif; font-style: italic; font-size: 16.5px; line-height: 1.32; }
+
+@media (max-width: 1000px) {
+  .relatedGrid { grid-template-columns: 1fr; }
+  .inlinePhoto { margin-left: 0; margin-right: 0; }
+  .inlinePhoto figcaption { padding: 0; }
+  .relatedHead { padding-left: 22px; padding-right: 22px; }
+}
