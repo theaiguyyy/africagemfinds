@@ -225,7 +225,7 @@
   inset: 0;
   background-color: var(--ink);
   background-size: cover;
-  background-position: center;
+  background-position: center 38%;
   z-index: 0;
 }
 

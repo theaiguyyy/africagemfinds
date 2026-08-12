@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
+import ReactMarkdown from 'react-markdown';
 import StickyNav from '@/components/StickyNav';
 import Footer from '@/components/Footer';
 import styles from './post.module.css';
@@ -90,7 +91,7 @@ export default function BlogPostPage() {
 
       <div className="container">
         <article ref={articleRef} className={`${styles.artBody} ${styles.narrow} reveal`}>
-          {cmsPost ? cmsPost.content.split(/\n{2,}/).filter(Boolean).map((paragraph, index) => <p key={index}>{paragraph}</p>) : <>
+          {cmsPost ? <ReactMarkdown>{cmsPost.content}</ReactMarkdown> : <>
           <p>Most people who message us about rough gemstones for the first time ask some version of the same question: how do you actually know if a stone is good? There&apos;s no shortcut that replaces years in the trade, but there are a handful of things worth learning to look at, whether you&apos;re buying your first specimen or sourcing a parcel for resale.</p>
 
           <h2><span className={styles.num}>01</span>Color</h2>

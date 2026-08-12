@@ -97,7 +97,7 @@ export default function AboutPage() {
       {/* HERO */}
       <header className={styles.hero}>
         <img
-          src="/images/Stone34-621.jpg"
+          src="/images/about-family-inspection.jpg"
           alt="Founders of African Gem Finds"
           className={`${styles.heroImg} about-photo`}
         />
@@ -117,7 +117,7 @@ export default function AboutPage() {
           <div className={`${styles.storyFrame} reveal`} ref={storyFrameRef}>
             <img
               ref={storyImgRef}
-              src="/images/Stone34-536.jpg"
+              src="/images/about-how-it-started.jpg"
               alt="Founder inspecting rough aquamarine"
               className={styles.storyFrameImg}
             />
@@ -208,7 +208,7 @@ export default function AboutPage() {
 
       {/* SERVE BLEED */}
       <section className={styles.serveBleed}>
-        <div className={styles.serveBg} style={{ backgroundImage: "url('/images/Stone34-630.jpg')" }} />
+        <div className={styles.serveBg} style={{ backgroundImage: "url('/images/about-who-we-serve.jpg')" }} />
         <div className={styles.serveScrim} />
         <div className={`${styles.serveInner} reveal`}>
           <span className="eyebrow" style={{ color: '#EFE6D2', justifyContent: 'center' }}>Who We Serve</span>
