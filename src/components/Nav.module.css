@@ -96,6 +96,9 @@
   color: #fff;
 }
 
+.menuButton,
+.menuBackdrop { display: none; }
+
 /* Sticky nav variant (non-transparent pages) */
 .stickyNav {
   position: sticky;
@@ -116,10 +119,52 @@
 .stickyNav .navLinks a:not(.navCta):hover { color: var(--ink); opacity: 1; }
 
 @media (max-width: 1000px) {
-  .navLinks { display: none; }
   .nav { padding: 20px 22px; }
   .scrolled { padding: 14px 22px !important; }
   .navLogo,
   .navLogo img { height: 56px; }
   .navLogo img { max-width: min(66vw, 190px); }
+  .menuButton {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 44px;
+    height: 44px;
+    padding: 10px;
+    border: 0;
+    background: transparent;
+    position: relative;
+    z-index: 103;
+  }
+  .menuButton span { display: block; width: 24px; height: 1.5px; background: #fff; transition: transform .25s ease, opacity .2s ease; }
+  .scrolled .menuButton span { background: var(--ink); }
+  .menuButton[aria-expanded="true"] span { background: var(--ink); }
+  .menuButton[aria-expanded="true"] span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+  .menuButton[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+  .menuButton[aria-expanded="true"] span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+  .navLinks {
+    display: flex;
+    position: fixed;
+    z-index: 102;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: min(84vw, 360px);
+    padding: 118px 32px 40px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    background: #fff;
+    transform: translateX(105%);
+    visibility: hidden;
+    transition: transform .35s cubic-bezier(.16,1,.3,1), visibility .35s;
+    box-shadow: -20px 0 50px rgba(23,20,15,.16);
+  }
+  .navLinks.menuOpen { transform: translateX(0); visibility: visible; }
+  .navLinks li { border-bottom: 1px solid var(--line); }
+  .navLinks a, .scrolled .navLinks a { display: block; padding: 18px 0; color: var(--ink-soft); font-size: 14px; }
+  .navLinks a.current, .scrolled .navLinks a.current { color: var(--ink); }
+  .navLinks .navCta { margin-top: 22px; padding: 14px 20px; text-align: center; }
+  .menuBackdrop { display: block; position: fixed; z-index: 101; inset: 0; border: 0; background: rgba(8,10,9,.48); }
 }

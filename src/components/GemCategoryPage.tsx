@@ -131,7 +131,7 @@ export default function GemCategoryPage({
       {/* Hero banner */}
       <header className={`${styles.catHero} cat-hero`}>
         {cmsHero
-          ? <img ref={bannerImgRef} src={cmsHero} alt={name} className={`${styles.catHeroBg} cat-hero-bg-img`} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+          ? <img ref={bannerImgRef} src={cmsHero} alt={name} className={`${styles.catHeroBg} cat-hero-bg-img`} fetchPriority="high" decoding="async" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
           : <div className={`${styles.catHeroBg} cat-hero-bg-img`} style={{ background: `linear-gradient(135deg, ${accentVar}, #2b241c)` }} />
         }
         <div className={styles.catHeroScrim} />
@@ -178,7 +178,7 @@ export default function GemCategoryPage({
             {cmsSpecimens.map(s => (
               <div key={s.key ?? `${s.id}-${s.img ?? ''}`} className={`${styles.specCard} specimen-card`}>
                 {s.img
-                  ? <img src={s.img} alt={s.id} className={styles.specPhotoImg} />
+                  ? <img src={s.img} alt={s.id} className={styles.specPhotoImg} loading="lazy" decoding="async" />
                   : <div className={styles.specPhotoPlaceholder} style={{ background: `linear-gradient(135deg, ${accentVar}44, #2b241c)` }} />
                 }
                 <div className={styles.specScrim} />

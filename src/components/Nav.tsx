@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import styles from './Nav.module.css';
@@ -8,6 +8,22 @@ import styles from './Nav.module.css';
 export default function Nav({ transparent = false }: { transparent?: boolean }) {
   const navRef = useRef<HTMLElement>(null);
   const pathname = usePathname();
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => setMenuOpen(false), [pathname]);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setMenuOpen(false);
+    };
+    document.body.style.overflow = 'hidden';
+    window.addEventListener('keydown', closeOnEscape);
+    return () => {
+      document.body.style.overflow = '';
+      window.removeEventListener('keydown', closeOnEscape);
+    };
+  }, [menuOpen]);
 
   useEffect(() => {
     if (!transparent) return;
@@ -30,7 +46,10 @@ export default function Nav({ transparent = false }: { transparent?: boolean }) 
       <Link href="/" className={styles.navLogo}>
         <img src="/africa-gem-finds-logo-transparent.png" alt="Africa Gem Finds" />
       </Link>
-      <ul className={styles.navLinks}>
+      <button className={styles.menuButton} type="button" aria-label={menuOpen ? 'Close menu' : 'Open menu'} aria-expanded={menuOpen} aria-controls="mobile-navigation" onClick={() => setMenuOpen(open => !open)}>
+        <span /><span /><span />
+      </button>
+      <ul id="mobile-navigation" className={`${styles.navLinks} ${menuOpen ? styles.menuOpen : ''}`}>
         <li><Link href="/" className={isActive('/') ? styles.current : ''}>Home</Link></li>
         <li>
           <Link
@@ -46,6 +65,7 @@ export default function Nav({ transparent = false }: { transparent?: boolean }) 
           <Link href="/contact" className={styles.navCta}>Inquire</Link>
         </li>
       </ul>
+      {menuOpen && <button className={styles.menuBackdrop} type="button" aria-label="Close menu" onClick={() => setMenuOpen(false)} />}
     </nav>
   );
 }

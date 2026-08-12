@@ -100,6 +100,8 @@ export default function AboutPage() {
           src="/images/about-family-inspection.jpg"
           alt="Founders of African Gem Finds"
           className={`${styles.heroImg} about-photo`}
+          fetchPriority="high"
+          decoding="async"
         />
         <div className={styles.heroScrim} />
         <div className={styles.heroContent}>
@@ -120,6 +122,8 @@ export default function AboutPage() {
               src="/images/about-how-it-started.jpg"
               alt="Founder inspecting rough aquamarine"
               className={styles.storyFrameImg}
+              loading="lazy"
+              decoding="async"
             />
             <div className={styles.storyLens} ref={storyLensRef} />
             <div className={styles.storyHint}>Hover to inspect</div>

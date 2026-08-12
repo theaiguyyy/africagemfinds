@@ -234,7 +234,7 @@ export default function HomePage() {
               className={`${styles.heroSlide} ${i === 0 ? styles.active : ''}`}
               ref={el => { if (el) slidesRef.current[i] = el; }}
             >
-              <img src={s.img} alt={s.label} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+              <img src={s.img} alt={s.label} loading={i === 0 ? 'eager' : 'lazy'} fetchPriority={i === 0 ? 'high' : 'low'} decoding="async" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
             </div>
           ))}
         </div>
@@ -322,7 +322,7 @@ export default function HomePage() {
             <Link key={c.name} href={c.href} className={`${styles.catCard} cat-card`}>
               {c.empty
                 ? <div className={styles.catEmpty} style={{ background: `linear-gradient(135deg, ${c.color}, #2b241c)` }} />
-                : <img src={c.img!} alt={c.name} className={styles.catImg} />
+                : <img src={c.img!} alt={c.name} className={styles.catImg} loading="lazy" decoding="async" />
               }
               <div className={styles.catScrim} />
               <div className={styles.catLabel}>
@@ -345,6 +345,8 @@ export default function HomePage() {
               src="/images/Stone34-559.jpg"
               alt="Africa Gem Finds team inspecting rough aquamarine"
               id="trustImg"
+              loading="lazy"
+              decoding="async"
               style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
             />
             <div className={styles.trustLens} ref={trustLensRef} id="trustLens" />
@@ -387,7 +389,7 @@ export default function HomePage() {
       {/* CONTACT */}
       <section className={`${styles.contact} contact-band`} id="contact">
         <div className={styles.contactVisual}>
-          <img src="/images/Stone15-205.jpg" alt="Morganite rough gemstones" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+          <img src="/images/Stone15-205.jpg" alt="Morganite rough gemstones" loading="lazy" decoding="async" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
           <div className={styles.contactTag}>Morganite, Africa</div>
         </div>
         <div className={styles.contactFormWrap}>
