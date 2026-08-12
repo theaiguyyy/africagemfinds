@@ -14,14 +14,16 @@
 .navLogo {
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-family: 'Fraunces', serif;
-  font-size: 19px;
-  color: var(--ink);
+  height: 72px;
 }
 
-.dots { display: flex; gap: 3px; }
-.dots span { width: 6px; height: 6px; border-radius: 50%; }
+.navLogo img {
+  display: block;
+  width: auto;
+  height: 72px;
+  max-width: min(40vw, 240px);
+  object-fit: contain;
+}
 
 .navLinks {
   display: flex;
@@ -60,4 +62,7 @@
 @media (max-width: 1000px) {
   .navLinks { display: none; }
   .nav { padding: 20px 22px; }
+  .navLogo,
+  .navLogo img { height: 56px; }
+  .navLogo img { max-width: min(66vw, 190px); }
 }

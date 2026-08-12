@@ -28,12 +28,7 @@ export default function Nav({ transparent = false }: { transparent?: boolean }) 
       id="nav"
     >
       <Link href="/" className={styles.navLogo}>
-        <span className={styles.dots}>
-          <span style={{ background: 'var(--blue)' }} />
-          <span style={{ background: 'var(--green)' }} />
-          <span style={{ background: 'var(--ruby)' }} />
-        </span>
-        African Gem Finds
+        <img src="/africa-gem-finds-logo-transparent.png" alt="Africa Gem Finds" />
       </Link>
       <ul className={styles.navLinks}>
         <li><Link href="/" className={isActive('/') ? styles.current : ''}>Home</Link></li>

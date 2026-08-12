@@ -21,15 +21,15 @@
 .navLogo {
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-family: 'Fraunces', serif;
-  font-size: 19px;
-  color: #fff;
-  transition: color .4s ease;
+  height: 72px;
 }
 
-.scrolled .navLogo {
-  color: var(--ink);
+.navLogo img {
+  display: block;
+  width: auto;
+  height: 72px;
+  max-width: min(40vw, 240px);
+  object-fit: contain;
 }
 
 .dots {
@@ -119,4 +119,7 @@
   .navLinks { display: none; }
   .nav { padding: 20px 22px; }
   .scrolled { padding: 14px 22px !important; }
+  .navLogo,
+  .navLogo img { height: 56px; }
+  .navLogo img { max-width: min(66vw, 190px); }
 }
