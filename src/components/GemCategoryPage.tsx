@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import StickyNav from './StickyNav';
 import Footer from './Footer';
 import styles from './GemCategoryPage.module.css';
@@ -132,7 +131,7 @@ export default function GemCategoryPage({
       {/* Hero banner */}
       <header className={`${styles.catHero} cat-hero`}>
         {cmsHero
-          ? <Image ref={bannerImgRef} src={cmsHero} alt={name} className={`${styles.catHeroBg} cat-hero-bg-img`} fill sizes="100vw" priority />
+          ? <img ref={bannerImgRef} src={cmsHero} alt={name} className={`${styles.catHeroBg} cat-hero-bg-img`} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
           : <div className={`${styles.catHeroBg} cat-hero-bg-img`} style={{ background: `linear-gradient(135deg, ${accentVar}, #2b241c)` }} />
         }
         <div className={styles.catHeroScrim} />
@@ -179,7 +178,7 @@ export default function GemCategoryPage({
             {cmsSpecimens.map(s => (
               <div key={s.key ?? `${s.id}-${s.img ?? ''}`} className={`${styles.specCard} specimen-card`}>
                 {s.img
-                  ? <Image src={s.img} alt={s.id} className={styles.specPhotoImg} fill sizes="(max-width: 600px) 100vw, (max-width: 1000px) 50vw, 33vw" />
+                  ? <img src={s.img} alt={s.id} className={styles.specPhotoImg} />
                   : <div className={styles.specPhotoPlaceholder} style={{ background: `linear-gradient(135deg, ${accentVar}44, #2b241c)` }} />
                 }
                 <div className={styles.specScrim} />

@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import styles from './HomePage.module.css';
 
 const heroStops = [
@@ -27,7 +26,6 @@ const categories = [
 
 export default function HomePage() {
   const [categoryCards, setCategoryCards] = useState(categories);
-  const [slidesReady, setSlidesReady] = useState(false);
   const currentRef = useRef(0);
   const slidesRef = useRef<HTMLDivElement[]>([]);
   const dotsRef = useRef<HTMLDivElement[]>([]);
@@ -36,18 +34,6 @@ export default function HomePage() {
   const trustVisualRef = useRef<HTMLDivElement>(null);
   const trustLensRef = useRef<HTMLDivElement>(null);
   const trustImgRef = useRef<HTMLImageElement>(null);
-
-  useEffect(() => {
-    const prepareSlides = () => setSlidesReady(true);
-    const timer = window.setTimeout(prepareSlides, 3500);
-    window.addEventListener('pointerdown', prepareSlides, { once: true, passive: true });
-    window.addEventListener('keydown', prepareSlides, { once: true });
-    return () => {
-      window.clearTimeout(timer);
-      window.removeEventListener('pointerdown', prepareSlides);
-      window.removeEventListener('keydown', prepareSlides);
-    };
-  }, []);
 
   useEffect(() => {
     let active = true;
@@ -248,7 +234,7 @@ export default function HomePage() {
               className={`${styles.heroSlide} ${i === 0 ? styles.active : ''}`}
               ref={el => { if (el) slidesRef.current[i] = el; }}
             >
-              {(i === 0 || slidesReady) && <Image src={s.img} alt={s.label} fill sizes="100vw" priority={i === 0} />}
+              <img src={s.img} alt={s.label} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
             </div>
           ))}
         </div>
@@ -336,7 +322,7 @@ export default function HomePage() {
             <Link key={c.name} href={c.href} className={`${styles.catCard} cat-card`}>
               {c.empty
                 ? <div className={styles.catEmpty} style={{ background: `linear-gradient(135deg, ${c.color}, #2b241c)` }} />
-                : <Image src={c.img!} alt={c.name} className={styles.catImg} fill sizes="(max-width: 1000px) 100vw, 50vw" />
+                : <img src={c.img!} alt={c.name} className={styles.catImg} />
               }
               <div className={styles.catScrim} />
               <div className={styles.catLabel}>
@@ -354,13 +340,12 @@ export default function HomePage() {
       <section className={styles.trust}>
         <div className={styles.trustGrid}>
           <div className={`${styles.trustVisual} reveal`} ref={trustVisualRef} id="trustVisual">
-            <Image
+            <img
               ref={trustImgRef}
               src="/images/Stone34-559.jpg"
               alt="Africa Gem Finds team inspecting rough aquamarine"
               id="trustImg"
-              fill
-              sizes="(max-width: 1000px) 100vw, 50vw"
+              style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
             />
             <div className={styles.trustLens} ref={trustLensRef} id="trustLens" />
             <div className={styles.trustHint}>Hover to inspect</div>
@@ -402,7 +387,7 @@ export default function HomePage() {
       {/* CONTACT */}
       <section className={`${styles.contact} contact-band`} id="contact">
         <div className={styles.contactVisual}>
-          <Image src="/images/Stone15-205.jpg" alt="Morganite rough gemstones" fill sizes="(max-width: 1000px) 100vw, 50vw" />
+          <img src="/images/Stone15-205.jpg" alt="Morganite rough gemstones" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
           <div className={styles.contactTag}>Morganite, Africa</div>
         </div>
         <div className={styles.contactFormWrap}>

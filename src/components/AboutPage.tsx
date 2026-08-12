@@ -2,7 +2,6 @@
 
 import { useEffect, useRef } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import styles from './AboutPage.module.css';
 
 export default function AboutPage() {
@@ -97,13 +96,10 @@ export default function AboutPage() {
     <main ref={pageRef}>
       {/* HERO */}
       <header className={styles.hero}>
-        <Image
+        <img
           src="/images/Stone34-621.jpg"
           alt="Founders of African Gem Finds"
           className={`${styles.heroImg} about-photo`}
-          fill
-          sizes="100vw"
-          priority
         />
         <div className={styles.heroScrim} />
         <div className={styles.heroContent}>
@@ -119,13 +115,11 @@ export default function AboutPage() {
       <section className={styles.story}>
         <div className={`container ${styles.storyGrid}`}>
           <div className={`${styles.storyFrame} reveal`} ref={storyFrameRef}>
-            <Image
+            <img
               ref={storyImgRef}
               src="/images/Stone34-536.jpg"
               alt="Founder inspecting rough aquamarine"
               className={styles.storyFrameImg}
-              fill
-              sizes="(max-width: 900px) 100vw, 50vw"
             />
             <div className={styles.storyLens} ref={storyLensRef} />
             <div className={styles.storyHint}>Hover to inspect</div>

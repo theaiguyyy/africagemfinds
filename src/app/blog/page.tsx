@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import StickyNav from '@/components/StickyNav';
 import Footer from '@/components/Footer';
 import styles from './blog.module.css';
@@ -70,7 +69,7 @@ export default function BlogListPage() {
       </div>
 
       <Link href={`/blog/${visiblePosts[0]?.slug ?? fallbackFeatured.slug}`} className={`${styles.featured} reveal`}>
-        <Image src={visiblePosts[0]?.img ?? fallbackFeatured.img} alt={visiblePosts[0]?.title ?? fallbackFeatured.title} fill sizes="100vw" priority />
+        <img src={visiblePosts[0]?.img ?? fallbackFeatured.img} alt={visiblePosts[0]?.title ?? fallbackFeatured.title} />
         <div className={styles.featuredScrim} />
         <div className={styles.featuredCopy}>
           <span className={styles.featuredTag}>{visiblePosts[0]?.tag ?? fallbackFeatured.tag}</span>
@@ -92,7 +91,7 @@ export default function BlogListPage() {
       <div className={styles.postGrid}>
         {visiblePosts.slice(1).map((post) => (
           <Link href={`/blog/${post.slug}`} className={styles.postCard} key={post.slug}>
-            <Image src={post.img} alt={post.title} fill sizes="(max-width: 1000px) 50vw, 33vw" />
+            <img src={post.img} alt={post.title} />
             <div className={styles.postScrim} />
             <div className={styles.postLabel}>
               <span className={styles.postTag}>{post.tag}</span>
