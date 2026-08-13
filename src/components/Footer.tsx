@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function Footer() {
   const year = new Date().getFullYear();
@@ -8,14 +9,9 @@ export default function Footer() {
       <div className="container">
         <div className="footer-grid">
           <div>
-            <div className="footer-logo">
-              <span className="dots" style={{ display: 'flex', gap: '3px' }}>
-                <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--blue)' }} />
-                <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--green)' }} />
-                <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--ruby)' }} />
-              </span>
-              African Gem Finds
-            </div>
+            <Link href="/" className="footer-logo" aria-label="Africa Gem Finds home">
+              <Image src="/africa-gem-finds-logo-nav.png" alt="Africa Gem Finds" width={359} height={216} quality={95} />
+            </Link>
             <p className="footer-tag">
               A trusted bridge between Africa&apos;s gemstone-rich regions and a global community of collectors and trade buyers.
             </p>
@@ -31,8 +27,8 @@ export default function Footer() {
             <h4>Connect</h4>
             <a href="https://wa.me/66617472342" target="_blank" rel="noopener noreferrer">WhatsApp</a>
             <a href="https://www.instagram.com/african_gem_finds" target="_blank" rel="noopener noreferrer">Instagram</a>
-            <a href="/" >Facebook</a>
             <a href="https://line.me/ti/p/~66617472342" target="_blank" rel="noopener noreferrer">LINE</a>
+            <a href="mailto:africagemfinds@gmail.com">Email</a>
           </div>
           <div className="footer-col">
             <h4>Contact</h4>

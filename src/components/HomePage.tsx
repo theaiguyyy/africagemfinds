@@ -37,9 +37,6 @@ export default function HomePage() {
   const dotsRef = useRef<HTMLDivElement[]>([]);
   const heroTagRef = useRef<HTMLSpanElement>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
-  const trustVisualRef = useRef<HTMLDivElement>(null);
-  const trustLensRef = useRef<HTMLDivElement>(null);
-  const trustImgRef = useRef<HTMLImageElement>(null);
   const heroRef = useRef<HTMLElement>(null);
   const reduceMotionRef = useRef(false);
   const heroLoadedRef = useRef(false);
@@ -145,30 +142,6 @@ export default function HomePage() {
     const heroObserver = new IntersectionObserver(([entry]) => setHeroInView(entry.isIntersecting), { threshold: 0.05 });
     if (heroRef.current) heroObserver.observe(heroRef.current);
 
-    // Trust loupe (§6.9 — plain JS, do not GSAP)
-    const lensSize = 170;
-    const zoom = 2.2;
-    function moveLens(e: MouseEvent) {
-      const visual = trustVisualRef.current;
-      const lens = trustLensRef.current;
-      const img = trustImgRef.current;
-      if (!visual || !lens || !img) return;
-      const rect = visual.getBoundingClientRect();
-      if (!rect.width || !rect.height) return;
-      const relX = Math.max(0, Math.min(e.clientX - rect.left, rect.width));
-      const relY = Math.max(0, Math.min(e.clientY - rect.top, rect.height));
-      lens.style.left = (relX - lensSize / 2) + 'px';
-      lens.style.top = (relY - lensSize / 2) + 'px';
-      lens.style.backgroundImage = "url('/images/Stone34-559.jpg')";
-      lens.style.backgroundSize = `${rect.width * zoom}px ${rect.height * zoom}px`;
-      lens.style.backgroundPosition = `${-relX * zoom + lensSize / 2}px ${-relY * zoom + lensSize / 2}px`;
-    }
-    const visual = trustVisualRef.current;
-    if (visual) {
-      visual.addEventListener('mousemove', moveLens);
-      visual.addEventListener('mouseenter', moveLens);
-    }
-
     return () => {
       cancelled = true;
       window.removeEventListener('load', startAnimations);
@@ -176,10 +149,6 @@ export default function HomePage() {
       reducedMotion.removeEventListener('change', onMotionChange);
       document.removeEventListener('visibilitychange', onVisibilityChange);
       heroObserver.disconnect();
-      if (visual) {
-        visual.removeEventListener('mousemove', moveLens);
-        visual.removeEventListener('mouseenter', moveLens);
-      }
     };
   }, []);
 
@@ -384,9 +353,8 @@ export default function HomePage() {
       {/* TRUST / LOUPE */}
       <section className={styles.trust}>
         <div className={styles.trustGrid}>
-          <div className={`${styles.trustVisual} reveal`} ref={trustVisualRef} id="trustVisual">
+          <div className={`${styles.trustVisual} reveal`} id="trustVisual">
             <Image
-              ref={trustImgRef}
               src="/images/Stone34-559.jpg"
               alt="Africa Gem Finds team inspecting rough aquamarine"
               id="trustImg"
@@ -395,8 +363,6 @@ export default function HomePage() {
               fill sizes="(max-width: 1000px) 100vw, 55vw" quality={95}
               style={{ objectFit: 'cover' }}
             />
-            <div className={styles.trustLens} ref={trustLensRef} id="trustLens" />
-            <div className={styles.trustHint}>Hover to inspect</div>
           </div>
           <div className={`${styles.trustCopy} reveal`}>
             <span className="eyebrow dark-eyebrow c-green">Authentication &amp; Trust</span>

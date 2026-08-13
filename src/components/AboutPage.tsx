@@ -8,9 +8,6 @@ import styles from './AboutPage.module.css';
 export default function AboutPage() {
   const pageRef = useRef<HTMLElement>(null);
   const processPathRef = useRef<HTMLDivElement>(null);
-  const storyFrameRef = useRef<HTMLDivElement>(null);
-  const storyLensRef = useRef<HTMLDivElement>(null);
-  const storyImgRef = useRef<HTMLImageElement>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -67,36 +64,10 @@ export default function AboutPage() {
     if (document.readyState === 'complete') startAnimations();
     else window.addEventListener('load', startAnimations, { once: true });
 
-    // Story loupe
-    const lensSize = 170, zoom = 2.2;
-    function moveLens(e: MouseEvent) {
-      const frame = storyFrameRef.current;
-      const lens = storyLensRef.current;
-      const img = storyImgRef.current;
-      if (!frame || !lens || !img) return;
-      const rect = frame.getBoundingClientRect();
-      if (!rect.width || !rect.height) return;
-      const relX = Math.max(0, Math.min(e.clientX - rect.left, rect.width));
-      const relY = Math.max(0, Math.min(e.clientY - rect.top, rect.height));
-      lens.style.left = (relX - lensSize / 2) + 'px';
-      lens.style.top = (relY - lensSize / 2) + 'px';
-      lens.style.backgroundImage = "url('/images/about-how-it-started.jpg')";
-      lens.style.backgroundSize = `${rect.width * zoom}px ${rect.height * zoom}px`;
-      lens.style.backgroundPosition = `${-relX * zoom + lensSize / 2}px ${-relY * zoom + lensSize / 2}px`;
-    }
-    const frame = storyFrameRef.current;
-    if (frame) {
-      frame.addEventListener('mousemove', moveLens);
-      frame.addEventListener('mouseenter', moveLens);
-    }
     return () => {
       cancelled = true;
       window.removeEventListener('load', startAnimations);
       disposeAnimations?.();
-      if (frame) {
-        frame.removeEventListener('mousemove', moveLens);
-        frame.removeEventListener('mouseenter', moveLens);
-      }
     };
   }, []);
 
@@ -123,9 +94,8 @@ export default function AboutPage() {
       {/* STORY */}
       <section className={styles.story}>
         <div className={`container ${styles.storyGrid}`}>
-          <div className={`${styles.storyFrame} reveal`} ref={storyFrameRef}>
+          <div className={`${styles.storyFrame} reveal`}>
             <Image
-              ref={storyImgRef}
               src="/images/about-how-it-started.jpg"
               alt="Founder inspecting rough aquamarine"
               className={styles.storyFrameImg}
@@ -133,8 +103,6 @@ export default function AboutPage() {
               decoding="async"
               fill sizes="(max-width: 900px) 100vw, 50vw" quality={95}
             />
-            <div className={styles.storyLens} ref={storyLensRef} />
-            <div className={styles.storyHint}>Hover to inspect</div>
           </div>
           <div className={`${styles.storyCopy} reveal`}>
             <span className="eyebrow dark-eyebrow c-blue">How It Started</span>
