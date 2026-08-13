@@ -38,6 +38,7 @@ yarn-error.log*
 # Local high-resolution source photography (web-ready copies live in public/images)
 /AGF Stone pictures/
 /Founder Pictures/
+/public/AGF/
 
 # vercel
 .vercel

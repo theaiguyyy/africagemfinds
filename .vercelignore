@@ -5,6 +5,7 @@
 node_modules
 AGF Stone pictures
 Founder Pictures
+public/AGF
 env.local
 env.local.rtf
 *.log

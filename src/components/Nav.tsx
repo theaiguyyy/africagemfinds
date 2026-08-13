@@ -62,6 +62,7 @@ export default function Nav({ transparent = false }: { transparent?: boolean }) 
         </li>
         <li><Link href="/about" className={isActive('/about') ? styles.current : ''}>About</Link></li>
         <li><Link href="/blog" className={pathname?.startsWith('/blog') ? styles.current : ''}>Blog</Link></li>
+        <li><Link href="/gallery" className={isActive('/gallery') ? styles.current : ''}>Gallery</Link></li>
         <li>
           <Link href="/contact" className={styles.navCta}>Inquire</Link>
         </li>

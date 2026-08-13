@@ -19,6 +19,13 @@ export async function POST(request: Request) {
     }
 
     const supabase = getSupabaseAdminClient();
+    const context = [
+      clean(body.stoneId, 80) && `Stone reference: ${clean(body.stoneId, 80)}`,
+      clean(body.stoneStatus, 20) && `Stone status: ${clean(body.stoneStatus, 20)}`,
+      clean(body.pageUrl, 500) && `Page: ${clean(body.pageUrl, 500)}`,
+      clean(body.primaryImage, 500) && `Primary image: ${clean(body.primaryImage, 500)}`,
+    ].filter(Boolean).join('\n');
+    if (context) inquiry.message = `${inquiry.message}\n\n${context}`.slice(0, 4000);
     const { data, error } = await supabase.from('inquiries').insert(inquiry).select('id, created_at').single();
     if (error) throw error;
 

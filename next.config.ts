@@ -6,13 +6,16 @@ const nextConfig: NextConfig = {
       source: '/images/:path*',
       headers: [{ key: 'Cache-Control', value: 'public, max-age=86400, stale-while-revalidate=604800' }],
     }, {
+      source: '/gallery-variants/:path*',
+      headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }],
+    }, {
       source: '/africa-gem-finds-logo-transparent.png',
       headers: [{ key: 'Cache-Control', value: 'public, max-age=86400, stale-while-revalidate=604800' }],
     }];
   },
   images: {
     formats: ['image/webp'],
-    qualities: [95],
+    qualities: [90, 95],
     deviceSizes: [320, 480, 640, 750, 828, 1080, 1200, 1600, 1920, 2400],
     imageSizes: [320, 480, 640, 750, 828, 1080, 1200],
     minimumCacheTTL: 2678400,

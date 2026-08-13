@@ -40,6 +40,7 @@ export default function StickyNav() {
             Blog
           </Link>
         </li>
+        <li><Link href="/gallery" className={pathname === '/gallery' ? styles.current : ''}>Gallery</Link></li>
         <li><Link href="/contact" className={styles.navCta}>Inquire</Link></li>
       </ul>
       {menuOpen && <button className={styles.menuBackdrop} type="button" aria-label="Close menu" onClick={() => setMenuOpen(false)} />}

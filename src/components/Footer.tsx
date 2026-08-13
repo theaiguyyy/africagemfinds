@@ -22,6 +22,7 @@ export default function Footer() {
             <Link href="/gems/aquamarine">Gem Categories</Link>
             <Link href="/about">About</Link>
             <Link href="/blog">Blog</Link>
+            <Link href="/gallery">Gallery</Link>
           </div>
           <div className="footer-col">
             <h4>Connect</h4>

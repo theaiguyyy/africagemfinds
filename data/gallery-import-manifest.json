@@ -1,0 +1,758 @@
+{
+  "generatedAt": "2026-08-13T17:33:43.531Z",
+  "source": "AGF",
+  "records": [
+    {
+      "number": 1,
+      "title": "Madagascar Aquamarine Rough Parcel",
+      "family": "Aquamarine",
+      "origin": "Madagascar",
+      "rawWeight": "2467kg",
+      "weightValue": null,
+      "weightUnit": null,
+      "publicWeight": "Weight to be confirmed",
+      "sku": "AGF-GAL-001",
+      "slug": "gallery-agf-gal-001",
+      "status": "available",
+      "publishState": "published",
+      "sourceFiles": [
+        "Stone1-028.jpg",
+        "Stone1-029.jpg",
+        "Stone1-033.jpg"
+      ],
+      "primaryImage": "Stone1-028.jpg",
+      "alternateImages": [
+        "Stone1-029.jpg",
+        "Stone1-033.jpg"
+      ],
+      "warnings": [
+        "Weight unit requires review: 2467kg."
+      ]
+    },
+    {
+      "number": 2,
+      "title": "Congo Tourmaline Parcel",
+      "family": "Tourmaline",
+      "origin": "Congo",
+      "rawWeight": "1400kg",
+      "weightValue": null,
+      "weightUnit": null,
+      "publicWeight": "Weight to be confirmed",
+      "sku": "AGF-GAL-002",
+      "slug": "gallery-agf-gal-002",
+      "status": "available",
+      "publishState": "published",
+      "sourceFiles": [
+        "Stone2-038.jpg",
+        "Stone2-040.jpg",
+        "Stone2-044.jpg"
+      ],
+      "primaryImage": "Stone2-038.jpg",
+      "alternateImages": [
+        "Stone2-040.jpg",
+        "Stone2-044.jpg"
+      ],
+      "warnings": [
+        "Weight unit requires review: 1400kg."
+      ]
+    },
+    {
+      "number": 3,
+      "title": "Nigerian Aquamarine Rough Parcel",
+      "family": "Aquamarine",
+      "origin": "Nigeria",
+      "rawWeight": "2642kg",
+      "weightValue": null,
+      "weightUnit": null,
+      "publicWeight": "Weight to be confirmed",
+      "sku": "AGF-GAL-003",
+      "slug": "gallery-agf-gal-003",
+      "status": "available",
+      "publishState": "published",
+      "sourceFiles": [
+        "Stone3-047.jpg",
+        "Stone3-054.jpg",
+        "Stone3-057.jpg"
+      ],
+      "primaryImage": "Stone3-047.jpg",
+      "alternateImages": [
+        "Stone3-054.jpg",
+        "Stone3-057.jpg"
+      ],
+      "warnings": [
+        "Weight unit requires review: 2642kg."
+      ]
+    },
+    {
+      "number": 4,
+      "title": "Nigerian Beryl Parcel I",
+      "family": "Beryl",
+      "origin": "Nigeria",
+      "rawWeight": "",
+      "weightValue": null,
+      "weightUnit": null,
+      "publicWeight": "Weight on request",
+      "sku": "AGF-GAL-004",
+      "slug": "gallery-agf-gal-004",
+      "status": "available",
+      "publishState": "published",
+      "sourceFiles": [
+        "Stone4-068.jpg",
+        "Stone4-069.jpg",
+        "Stone4-077.jpg"
+      ],
+      "primaryImage": "Stone4-068.jpg",
+      "alternateImages": [
+        "Stone4-069.jpg",
+        "Stone4-077.jpg"
+      ],
+      "warnings": [
+        "Weight not supplied."
+      ]
+    },
+    {
+      "number": 5,
+      "title": "Nigerian Beryl Parcel II",
+      "family": "Beryl",
+      "origin": "Nigeria",
+      "rawWeight": "",
+      "weightValue": null,
+      "weightUnit": null,
+      "publicWeight": "Weight on request",
+      "sku": "AGF-GAL-005",
+      "slug": "gallery-agf-gal-005",
+      "status": "available",
+      "publishState": "published",
+      "sourceFiles": [
+        "Stone5-080.jpg",
+        "Stone5-084.jpg",
+        "Stone5-087.jpg"
+      ],
+      "primaryImage": "Stone5-080.jpg",
+      "alternateImages": [
+        "Stone5-084.jpg",
+        "Stone5-087.jpg"
+      ],
+      "warnings": [
+        "Weight not supplied."
+      ]
+    },
+    {
+      "number": 6,
+      "title": "Mozambique Aquamarine Rough Parcel",
+      "family": "Aquamarine",
+      "origin": "Mozambique",
+      "rawWeight": "2015kg",
+      "weightValue": null,
+      "weightUnit": null,
+      "publicWeight": "Weight to be confirmed",
+      "sku": "AGF-GAL-006",
+      "slug": "gallery-agf-gal-006",
+      "status": "available",
+      "publishState": "published",
+      "sourceFiles": [
+        "Stone6-093.jpg",
+        "Stone6-095.jpg",
+        "Stone6-100.jpg"
+      ],
+      "primaryImage": "Stone6-093.jpg",
+      "alternateImages": [
+        "Stone6-095.jpg",
+        "Stone6-100.jpg"
+      ],
+      "warnings": [
+        "Weight unit requires review: 2015kg."
+      ]
+    },
+    {
+      "number": 7,
+      "title": "Pink Morganite Parcel",
+      "family": "Morganite",
+      "origin": "",
+      "rawWeight": "1620kg",
+      "weightValue": null,
+      "weightUnit": null,
+      "publicWeight": "Weight to be confirmed",
+      "sku": "AGF-GAL-007",
+      "slug": "gallery-agf-gal-007",
+      "status": "available",
+      "publishState": "published",
+      "sourceFiles": [
+        "Stone7-102.jpg",
+        "Stone7-105.jpg",
+        "Stone7-109.jpg"
+      ],
+      "primaryImage": "Stone7-102.jpg",
+      "alternateImages": [
+        "Stone7-105.jpg",
+        "Stone7-109.jpg"
+      ],
+      "warnings": [
+        "Origin not supplied.",
+        "Weight unit requires review: 1620kg."
+      ]
+    },
+    {
+      "number": 8,
+      "title": "New Mine Ofiki Aquamarine",
+      "family": "Aquamarine",
+      "origin": "Nigeria",
+      "rawWeight": "596g",
+      "weightValue": 596,
+      "weightUnit": "g",
+      "publicWeight": "596 g",
+      "sku": "AGF-GAL-008",
+      "slug": "gallery-agf-gal-008",
+      "status": "available",
+      "publishState": "published",
+      "sourceFiles": [
+        "Stone8-114.jpg",
+        "Stone8-117.jpg",
+        "Stone8-118.jpg"
+      ],
+      "primaryImage": "Stone8-114.jpg",
+      "alternateImages": [
+        "Stone8-117.jpg",
+        "Stone8-118.jpg"
+      ],
+      "warnings": []
+    },
+    {
+      "number": 9,
+      "title": "Ofiki Aquamarine, Top Quality Small Size",
+      "family": "Aquamarine",
+      "origin": "Nigeria",
+      "rawWeight": "468g",
+      "weightValue": 468,
+      "weightUnit": "g",
+      "publicWeight": "468 g",
+      "sku": "AGF-GAL-009",
+      "slug": "gallery-agf-gal-009",
+      "status": "available",
+      "publishState": "published",
+      "sourceFiles": [
+        "Stone9-126.jpg",
+        "Stone9-129.jpg",
+        "Stone9-132.jpg"
+      ],
+      "primaryImage": "Stone9-126.jpg",
+      "alternateImages": [
+        "Stone9-129.jpg",
+        "Stone9-132.jpg"
+      ],
+      "warnings": []
+    },
+    {
+      "number": 10,
+      "title": "Ofiki Aquamarine, Top Quality Big Size",
+      "family": "Aquamarine",
+      "origin": "Nigeria",
+      "rawWeight": "731g",
+      "weightValue": 731,
+      "weightUnit": "g",
+      "publicWeight": "731 g",
+      "sku": "AGF-GAL-010",
+      "slug": "gallery-agf-gal-010",
+      "status": "available",
+      "publishState": "published",
+      "sourceFiles": [
+        "Stone10-137.jpg",
+        "Stone10-139.jpg",
+        "Stone10-144.jpg"
+      ],
+      "primaryImage": "Stone10-137.jpg",
+      "alternateImages": [
+        "Stone10-139.jpg",
+        "Stone10-144.jpg"
+      ],
+      "warnings": []
+    },
+    {
+      "number": 11,
+      "title": "Nigerian Aquamarine, Medium Quality",
+      "family": "Aquamarine",
+      "origin": "Nigeria",
+      "rawWeight": "2789kg",
+      "weightValue": null,
+      "weightUnit": null,
+      "publicWeight": "Weight to be confirmed",
+      "sku": "AGF-GAL-011",
+      "slug": "gallery-agf-gal-011",
+      "status": "available",
+      "publishState": "published",
+      "sourceFiles": [
+        "Stone11-145.jpg",
+        "Stone11-149.jpg",
+        "Stone11-152.jpg"
+      ],
+      "primaryImage": "Stone11-145.jpg",
+      "alternateImages": [
+        "Stone11-149.jpg",
+        "Stone11-152.jpg"
+      ],
+      "warnings": [
+        "Weight unit requires review: 2789kg."
+      ]
+    },
+    {
+      "number": 12,
+      "title": "Mozambique Aquamarine Parcel",
+      "family": "Aquamarine",
+      "origin": "Mozambique",
+      "rawWeight": "1526kg",
+      "weightValue": null,
+      "weightUnit": null,
+      "publicWeight": "Weight to be confirmed",
+      "sku": "AGF-GAL-012",
+      "slug": "gallery-agf-gal-012",
+      "status": "available",
+      "publishState": "published",
+      "sourceFiles": [
+        "Stone12-158.jpg",
+        "Stone12-161.jpg",
+        "Stone12-164.jpg"
+      ],
+      "primaryImage": "Stone12-158.jpg",
+      "alternateImages": [
+        "Stone12-161.jpg",
+        "Stone12-164.jpg"
+      ],
+      "warnings": [
+        "Weight unit requires review: 1526kg."
+      ]
+    },
+    {
+      "number": 13,
+      "title": "Madagascar Aquamarine Parcel",
+      "family": "Aquamarine",
+      "origin": "Madagascar",
+      "rawWeight": "2216.00, unit not supplied",
+      "weightValue": null,
+      "weightUnit": null,
+      "publicWeight": "Weight to be confirmed",
+      "sku": "AGF-GAL-013",
+      "slug": "gallery-agf-gal-013",
+      "status": "available",
+      "publishState": "published",
+      "sourceFiles": [
+        "Stone13-173.jpg",
+        "Stone13-175.jpg",
+        "Stone13-180.jpg"
+      ],
+      "primaryImage": "Stone13-173.jpg",
+      "alternateImages": [
+        "Stone13-175.jpg",
+        "Stone13-180.jpg"
+      ],
+      "warnings": [
+        "Weight unit requires review: 2216.00, unit not supplied."
+      ]
+    },
+    {
+      "number": 14,
+      "title": "Nigerian Beryl Parcel III",
+      "family": "Beryl",
+      "origin": "Nigeria",
+      "rawWeight": "2118kg",
+      "weightValue": null,
+      "weightUnit": null,
+      "publicWeight": "Weight to be confirmed",
+      "sku": "AGF-GAL-014",
+      "slug": "gallery-agf-gal-014",
+      "status": "available",
+      "publishState": "published",
+      "sourceFiles": [
+        "Stone14-183.jpg",
+        "Stone14-187.jpg",
+        "Stone14-191.jpg"
+      ],
+      "primaryImage": "Stone14-183.jpg",
+      "alternateImages": [
+        "Stone14-187.jpg",
+        "Stone14-191.jpg"
+      ],
+      "warnings": [
+        "Weight unit requires review: 2118kg."
+      ]
+    },
+    {
+      "number": 15,
+      "title": "Nigerian Aquamarine Parcel I",
+      "family": "Aquamarine",
+      "origin": "Nigeria",
+      "rawWeight": "1233kg",
+      "weightValue": null,
+      "weightUnit": null,
+      "publicWeight": "Weight to be confirmed",
+      "sku": "AGF-GAL-015",
+      "slug": "gallery-agf-gal-015",
+      "status": "available",
+      "publishState": "published",
+      "sourceFiles": [
+        "Stone15-198.jpg",
+        "Stone15-205.jpg",
+        "Stone15-208.jpg"
+      ],
+      "primaryImage": "Stone15-198.jpg",
+      "alternateImages": [
+        "Stone15-205.jpg",
+        "Stone15-208.jpg"
+      ],
+      "warnings": [
+        "Weight unit requires review: 1233kg."
+      ]
+    },
+    {
+      "number": 16,
+      "title": "Nigerian Aquamarine Parcel II",
+      "family": "Aquamarine",
+      "origin": "Nigeria",
+      "rawWeight": "1296kg",
+      "weightValue": null,
+      "weightUnit": null,
+      "publicWeight": "Weight to be confirmed",
+      "sku": "AGF-GAL-016",
+      "slug": "gallery-agf-gal-016",
+      "status": "available",
+      "publishState": "published",
+      "sourceFiles": [
+        "Stone16-215.jpg",
+        "Stone16-218.jpg",
+        "Stone16-221.jpg"
+      ],
+      "primaryImage": "Stone16-215.jpg",
+      "alternateImages": [
+        "Stone16-218.jpg",
+        "Stone16-221.jpg"
+      ],
+      "warnings": [
+        "Weight unit requires review: 1296kg."
+      ]
+    },
+    {
+      "number": 17,
+      "title": "Madagascar Aquamarine Parcel II",
+      "family": "Aquamarine",
+      "origin": "Madagascar",
+      "rawWeight": "1600kg",
+      "weightValue": null,
+      "weightUnit": null,
+      "publicWeight": "Weight to be confirmed",
+      "sku": "AGF-GAL-017",
+      "slug": "gallery-agf-gal-017",
+      "status": "available",
+      "publishState": "published",
+      "sourceFiles": [
+        "Stone17-227.jpg",
+        "Stone17-231.jpg",
+        "Stone17-234.jpg"
+      ],
+      "primaryImage": "Stone17-227.jpg",
+      "alternateImages": [
+        "Stone17-231.jpg",
+        "Stone17-234.jpg"
+      ],
+      "warnings": [
+        "Weight unit requires review: 1600kg."
+      ]
+    },
+    {
+      "number": 18,
+      "title": "Madagascar Aquamarine Parcel III",
+      "family": "Aquamarine",
+      "origin": "Madagascar",
+      "rawWeight": "",
+      "weightValue": null,
+      "weightUnit": null,
+      "publicWeight": "Weight on request",
+      "sku": "AGF-GAL-018",
+      "slug": "gallery-agf-gal-018",
+      "status": "available",
+      "publishState": "published",
+      "sourceFiles": [
+        "Stone18-239.jpg",
+        "Stone18-243.jpg",
+        "Stone18-247.jpg"
+      ],
+      "primaryImage": "Stone18-239.jpg",
+      "alternateImages": [
+        "Stone18-243.jpg",
+        "Stone18-247.jpg"
+      ],
+      "warnings": [
+        "Weight not supplied."
+      ]
+    },
+    {
+      "number": 19,
+      "title": "Yellow Aquamarine, Madagascar I",
+      "family": "Aquamarine",
+      "origin": "Madagascar",
+      "rawWeight": "",
+      "weightValue": null,
+      "weightUnit": null,
+      "publicWeight": "Weight on request",
+      "sku": "AGF-GAL-019",
+      "slug": "gallery-agf-gal-019",
+      "status": "available",
+      "publishState": "published",
+      "sourceFiles": [
+        "Stone19-253.jpg",
+        "Stone19-257.jpg"
+      ],
+      "primaryImage": "Stone19-253.jpg",
+      "alternateImages": [
+        "Stone19-257.jpg"
+      ],
+      "warnings": [
+        "Weight not supplied."
+      ]
+    },
+    {
+      "number": 20,
+      "title": "Yellow Aquamarine, Madagascar II",
+      "family": "Aquamarine",
+      "origin": "Madagascar",
+      "rawWeight": "",
+      "weightValue": null,
+      "weightUnit": null,
+      "publicWeight": "Weight on request",
+      "sku": "AGF-GAL-020",
+      "slug": "gallery-agf-gal-020",
+      "status": "available",
+      "publishState": "published",
+      "sourceFiles": [
+        "Stone20-266.jpg",
+        "Stone20-268.jpg",
+        "Stone20-271.jpg"
+      ],
+      "primaryImage": "Stone20-266.jpg",
+      "alternateImages": [
+        "Stone20-268.jpg",
+        "Stone20-271.jpg"
+      ],
+      "warnings": [
+        "Weight not supplied."
+      ]
+    },
+    {
+      "number": 21,
+      "title": "Afghanistan Tourmaline Parcel",
+      "family": "Tourmaline",
+      "origin": "Afghanistan",
+      "rawWeight": "2497kg",
+      "weightValue": null,
+      "weightUnit": null,
+      "publicWeight": "Weight to be confirmed",
+      "sku": "AGF-GAL-021",
+      "slug": "gallery-agf-gal-021",
+      "status": "available",
+      "publishState": "published",
+      "sourceFiles": [
+        "Stone21-276.jpg",
+        "Stone21-279.jpg",
+        "Stone21-280.jpg",
+        "Stone21-286.jpg"
+      ],
+      "primaryImage": "Stone21-276.jpg",
+      "alternateImages": [
+        "Stone21-279.jpg",
+        "Stone21-280.jpg"
+      ],
+      "warnings": [
+        "Weight unit requires review: 2497kg.",
+        "1 additional source image(s) retained but not imported."
+      ]
+    },
+    {
+      "number": 22,
+      "title": "Nigerian Agate Parcel",
+      "family": "Agate",
+      "origin": "Nigeria",
+      "rawWeight": "",
+      "weightValue": null,
+      "weightUnit": null,
+      "publicWeight": "Weight on request",
+      "sku": "AGF-GAL-022",
+      "slug": "gallery-agf-gal-022",
+      "status": "available",
+      "publishState": "published",
+      "sourceFiles": [
+        "Stone22-290.jpg",
+        "Stone22-297.jpg",
+        "Stone22-301.jpg"
+      ],
+      "primaryImage": "Stone22-290.jpg",
+      "alternateImages": [
+        "Stone22-297.jpg",
+        "Stone22-301.jpg"
+      ],
+      "warnings": [
+        "Weight not supplied."
+      ]
+    },
+    {
+      "number": 23,
+      "title": "Rose Cut Gemstone Parcel",
+      "family": "Gemstone",
+      "origin": "",
+      "rawWeight": "2655kg",
+      "weightValue": null,
+      "weightUnit": null,
+      "publicWeight": "Weight to be confirmed",
+      "sku": "AGF-GAL-023",
+      "slug": "gallery-agf-gal-023",
+      "status": "available",
+      "publishState": "published",
+      "sourceFiles": [
+        "Stone23-305.jpg",
+        "Stone23-307.jpg",
+        "Stone23-315.jpg"
+      ],
+      "primaryImage": "Stone23-305.jpg",
+      "alternateImages": [
+        "Stone23-307.jpg",
+        "Stone23-315.jpg"
+      ],
+      "warnings": [
+        "Origin not supplied.",
+        "Weight unit requires review: 2655kg."
+      ]
+    },
+    {
+      "number": 24,
+      "title": "Black Tourmaline Parcel",
+      "family": "Tourmaline",
+      "origin": "",
+      "rawWeight": "",
+      "weightValue": null,
+      "weightUnit": null,
+      "publicWeight": "Weight on request",
+      "sku": "AGF-GAL-024",
+      "slug": "gallery-agf-gal-024",
+      "status": "available",
+      "publishState": "published",
+      "sourceFiles": [
+        "Stone24-317.jpg",
+        "Stone24-321.jpg",
+        "Stone24-325.jpg"
+      ],
+      "primaryImage": "Stone24-317.jpg",
+      "alternateImages": [
+        "Stone24-321.jpg",
+        "Stone24-325.jpg"
+      ],
+      "warnings": [
+        "Origin not supplied.",
+        "Weight not supplied."
+      ]
+    },
+    {
+      "number": 25,
+      "title": "Nigerian Goshenite Parcel",
+      "family": "Goshenite",
+      "origin": "Nigeria",
+      "rawWeight": "",
+      "weightValue": null,
+      "weightUnit": null,
+      "publicWeight": "Weight on request",
+      "sku": "AGF-GAL-025",
+      "slug": "gallery-agf-gal-025",
+      "status": "available",
+      "publishState": "published",
+      "sourceFiles": [
+        "Stone25-332.jpg",
+        "Stone25-335.jpg",
+        "Stone25-339.jpg"
+      ],
+      "primaryImage": "Stone25-332.jpg",
+      "alternateImages": [
+        "Stone25-335.jpg",
+        "Stone25-339.jpg"
+      ],
+      "warnings": [
+        "Weight not supplied."
+      ]
+    },
+    {
+      "number": 26,
+      "title": "Mixed Green, Blue and Multicolour Tourmaline",
+      "family": "Tourmaline",
+      "origin": "",
+      "rawWeight": "",
+      "weightValue": null,
+      "weightUnit": null,
+      "publicWeight": "Weight on request",
+      "sku": "AGF-GAL-026",
+      "slug": "gallery-agf-gal-026",
+      "status": "available",
+      "publishState": "published",
+      "sourceFiles": [
+        "Stone26-347.jpg",
+        "Stone26-350.jpg",
+        "Stone26-352.jpg"
+      ],
+      "primaryImage": "Stone26-347.jpg",
+      "alternateImages": [
+        "Stone26-350.jpg",
+        "Stone26-352.jpg"
+      ],
+      "warnings": [
+        "Origin not supplied.",
+        "Weight not supplied."
+      ]
+    },
+    {
+      "number": 27,
+      "title": "Nigerian Rubellite Parcel",
+      "family": "Rubellite",
+      "origin": "Nigeria",
+      "rawWeight": "393g",
+      "weightValue": 393,
+      "weightUnit": "g",
+      "publicWeight": "393 g",
+      "sku": "AGF-GAL-027",
+      "slug": "gallery-agf-gal-027",
+      "status": "available",
+      "publishState": "published",
+      "sourceFiles": [
+        "Stone27-356.jpg",
+        "Stone27-359.jpg",
+        "Stone27-362.jpg",
+        "Stone27-368.jpg",
+        "Stone27-373.jpg"
+      ],
+      "primaryImage": "Stone27-356.jpg",
+      "alternateImages": [
+        "Stone27-359.jpg",
+        "Stone27-362.jpg"
+      ],
+      "warnings": [
+        "2 additional source image(s) retained but not imported."
+      ]
+    },
+    {
+      "number": 28,
+      "title": "Nigerian Potato Tourmaline Parcel",
+      "family": "Tourmaline",
+      "origin": "Nigeria",
+      "rawWeight": "520g",
+      "weightValue": 520,
+      "weightUnit": "g",
+      "publicWeight": "520 g",
+      "sku": "AGF-GAL-028",
+      "slug": "gallery-agf-gal-028",
+      "status": "available",
+      "publishState": "published",
+      "sourceFiles": [
+        "Stone28-374.jpg",
+        "Stone28-376.jpg"
+      ],
+      "primaryImage": "Stone28-374.jpg",
+      "alternateImages": [
+        "Stone28-376.jpg"
+      ],
+      "warnings": []
+    }
+  ]
+}

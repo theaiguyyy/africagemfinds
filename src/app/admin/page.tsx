@@ -28,6 +28,29 @@ interface Listing {
   origin?: string;
   photo_url?: string;
   position: number;
+  sku?: string;
+  gemstone_family?: string;
+  public_weight_label?: string;
+  raw_source_weight_note?: string;
+  publish_state?: 'draft' | 'published';
+  description?: string;
+  educational_note?: string;
+  form?: string;
+  colour?: string;
+}
+
+interface ListingImage {
+  id: string;
+  listing_id: string;
+  storage_key: string;
+  source_filename: string;
+  url: string;
+  width: number;
+  height: number;
+  mime_type: string;
+  alt_text: string;
+  sort_order: number;
+  is_primary: boolean;
 }
 
 interface MediaItem {
@@ -63,6 +86,7 @@ export default function AdminPage() {
   const [listings, setListings] = useState<Listing[]>([]);
   const [media, setMedia] = useState<MediaItem[]>([]);
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
+  const [listingImages, setListingImages] = useState<ListingImage[]>([]);
   const [uploading, setUploading] = useState(false);
   const [role, setRole] = useState<'owner' | 'staff'>('staff');
   const [mediaFilter, setMediaFilter] = useState('All');
@@ -71,6 +95,7 @@ export default function AdminPage() {
   const [selectedInquiry, setSelectedInquiry] = useState<Inquiry | null>(null);
   const [saveNotice, setSaveNotice] = useState<{ type: 'saving' | 'saved' | 'error'; message: string } | null>(null);
   const [uploadingPostImage, setUploadingPostImage] = useState(false);
+  const [uploadingListingImages, setUploadingListingImages] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Auth guard
@@ -104,16 +129,18 @@ export default function AdminPage() {
     const load = async () => {
       const { getSupabaseBrowserClient } = await import('@/lib/supabase/client');
       const supabase = getSupabaseBrowserClient();
-      const [inquiryResult, listingResult, mediaResult, blogResult] = await Promise.all([
+      const [inquiryResult, listingResult, mediaResult, blogResult, listingImageResult] = await Promise.all([
         supabase.from('inquiries').select('*').order('created_at', { ascending: false }).limit(100),
         supabase.from('listings').select('*').order('position'),
         supabase.from('media').select('*').order('position'),
         supabase.from('blog_posts').select('*').order('position'),
+        supabase.from('listing_images').select('*').order('sort_order'),
       ]);
       setInquiries((inquiryResult.data ?? []) as Inquiry[]);
       setListings((listingResult.data ?? []) as Listing[]);
       setMedia((mediaResult.data ?? []) as MediaItem[]);
       setBlogPosts((blogResult.data ?? []) as BlogPost[]);
+      setListingImages((listingImageResult.data ?? []) as ListingImage[]);
     };
     load();
   }, [authed]);
@@ -197,7 +224,7 @@ export default function AdminPage() {
     event.preventDefault();
     notify('saving', 'Saving listing…');
     const form = new FormData(event.currentTarget);
-    const payload = Object.fromEntries(['title','slug','category','weight','photo_url','status'].map(key => [key, form.get(key)]));
+    const payload = Object.fromEntries(['title','slug','sku','category','gemstone_family','origin','public_weight_label','raw_source_weight_note','description','educational_note','form','colour','photo_url','status','publish_state'].map(key => [key, form.get(key)]));
     const { getSupabaseBrowserClient } = await import('@/lib/supabase/client');
     const supabase = getSupabaseBrowserClient();
     const result = editingListing?.id
@@ -207,6 +234,91 @@ export default function AdminPage() {
     setListings(current => editingListing?.id ? current.map(item => item.id === result.data.id ? result.data as Listing : item) : [...current, result.data as Listing]);
     setEditingListing(null);
     notify('saved', 'Listing saved and published to the catalog.');
+  }
+
+  async function readImageSize(file: File) {
+    return await new Promise<{ width: number; height: number }>((resolve, reject) => {
+      const image = new window.Image();
+      const objectUrl = URL.createObjectURL(file);
+      image.onload = () => { resolve({ width: image.naturalWidth, height: image.naturalHeight }); URL.revokeObjectURL(objectUrl); };
+      image.onerror = () => { reject(new Error(`Could not read ${file.name}.`)); URL.revokeObjectURL(objectUrl); };
+      image.src = objectUrl;
+    });
+  }
+
+  async function uploadListingImages(listing: Listing, files: File[]) {
+    if (!files.length) return;
+    setUploadingListingImages(true);
+    notify('saving', `Uploading ${files.length} gallery image${files.length === 1 ? '' : 's'}…`);
+    try {
+      const { getSupabaseBrowserClient } = await import('@/lib/supabase/client');
+      const supabase = getSupabaseBrowserClient();
+      const existing = listingImages.filter(image => image.listing_id === listing.id);
+      const uploaded: ListingImage[] = [];
+      for (const [offset, file] of files.entries()) {
+        const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '-');
+        const storageKey = `gallery/${listing.sku || listing.id}/${Date.now()}-${offset}-${safeName}`;
+        const size = await readImageSize(file);
+        const { error: uploadError } = await supabase.storage.from('gem-photos').upload(storageKey, file, { cacheControl: '31536000', upsert: false });
+        if (uploadError) throw uploadError;
+        const { data: publicUrl } = supabase.storage.from('gem-photos').getPublicUrl(storageKey);
+        const row = {
+          listing_id: listing.id, storage_key: storageKey, source_filename: file.name, url: publicUrl.publicUrl,
+          width: size.width, height: size.height, mime_type: file.type || 'image/jpeg',
+          alt_text: `${listing.title}, view ${existing.length + offset + 1}`,
+          sort_order: existing.length + offset, is_primary: existing.length === 0 && offset === 0,
+        };
+        const { data, error } = await supabase.from('listing_images').insert(row).select().single();
+        if (error) throw error;
+        uploaded.push(data as ListingImage);
+      }
+      const primary = uploaded.find(image => image.is_primary);
+      if (primary) {
+        await supabase.from('listings').update({ photo_url: primary.url }).eq('id', listing.id);
+        setListings(current => current.map(item => item.id === listing.id ? { ...item, photo_url: primary.url } : item));
+      }
+      setListingImages(current => [...current, ...uploaded]);
+      notify('saved', 'Gallery images uploaded. Their order and primary image are saved.');
+    } catch (error) { notify('error', error instanceof Error ? error.message : 'Gallery image upload failed.'); }
+    finally { setUploadingListingImages(false); }
+  }
+
+  async function setPrimaryListingImage(listing: Listing, image: ListingImage) {
+    const { getSupabaseBrowserClient } = await import('@/lib/supabase/client');
+    const supabase = getSupabaseBrowserClient();
+    notify('saving', 'Saving primary gallery image…');
+    const reset = await supabase.from('listing_images').update({ is_primary: false }).eq('listing_id', listing.id);
+    if (reset.error) { notify('error', reset.error.message); return; }
+    const [imageResult, listingResult] = await Promise.all([
+      supabase.from('listing_images').update({ is_primary: true }).eq('id', image.id),
+      supabase.from('listings').update({ photo_url: image.url }).eq('id', listing.id),
+    ]);
+    if (imageResult.error || listingResult.error) { notify('error', imageResult.error?.message || listingResult.error?.message || 'Save failed.'); return; }
+    setListingImages(current => current.map(item => item.listing_id === listing.id ? { ...item, is_primary: item.id === image.id } : item));
+    setListings(current => current.map(item => item.id === listing.id ? { ...item, photo_url: image.url } : item));
+    notify('saved', 'Primary gallery image updated.');
+  }
+
+  async function moveListingImage(listingId: string, imageId: string, direction: -1 | 1) {
+    const images = listingImages.filter(image => image.listing_id === listingId).sort((a,b) => a.sort_order - b.sort_order);
+    const index = images.findIndex(image => image.id === imageId); const target = index + direction;
+    if (index < 0 || target < 0 || target >= images.length) return;
+    [images[index], images[target]] = [images[target], images[index]];
+    const positioned = images.map((image, sort_order) => ({ ...image, sort_order }));
+    const { getSupabaseBrowserClient } = await import('@/lib/supabase/client');
+    const supabase = getSupabaseBrowserClient(); notify('saving', 'Saving image order…');
+    const results = await Promise.all(positioned.map(image => supabase.from('listing_images').update({ sort_order: image.sort_order }).eq('id', image.id)));
+    const failed = results.find(result => result.error); if (failed?.error) { notify('error', failed.error.message); return; }
+    setListingImages(current => [...current.filter(image => image.listing_id !== listingId), ...positioned]);
+    notify('saved', 'Gallery image order saved.');
+  }
+
+  async function updateListingImageAlt(image: ListingImage, altText: string) {
+    const { getSupabaseBrowserClient } = await import('@/lib/supabase/client');
+    const { error } = await getSupabaseBrowserClient().from('listing_images').update({ alt_text: altText }).eq('id', image.id);
+    if (error) { notify('error', error.message); return; }
+    setListingImages(current => current.map(item => item.id === image.id ? { ...item, alt_text: altText } : item));
+    notify('saved', 'Image description saved.');
   }
 
   async function savePost(event: React.FormEvent<HTMLFormElement>) {
@@ -395,12 +507,33 @@ export default function AdminPage() {
             {editingListing && <form className={styles.editor} onSubmit={saveListing}>
               <input name="title" placeholder="Listing title" defaultValue={editingListing.title} required />
               <input name="slug" placeholder="listing-slug" defaultValue={editingListing.slug} required />
+              <input name="sku" placeholder="AGF-GAL-001" defaultValue={editingListing.sku} />
               <select name="category" defaultValue={editingListing.category}>{categories.map(cat => <option key={cat}>{cat}</option>)}</select>
-              <input name="weight" placeholder="Weight" defaultValue={editingListing.weight} />
+              <input name="gemstone_family" placeholder="Gemstone family" defaultValue={editingListing.gemstone_family ?? editingListing.category} />
+              <input name="origin" placeholder="Origin country" defaultValue={editingListing.origin} />
+              <input name="public_weight_label" placeholder="Public weight label" defaultValue={editingListing.public_weight_label ?? editingListing.weight} />
+              <input name="raw_source_weight_note" placeholder="Raw source weight note" defaultValue={editingListing.raw_source_weight_note} />
+              <input name="form" placeholder="Form" defaultValue={editingListing.form} />
+              <input name="colour" placeholder="Colour" defaultValue={editingListing.colour} />
+              <textarea name="description" placeholder="Verified lot description" defaultValue={editingListing.description} />
+              <textarea name="educational_note" placeholder="General educational note" defaultValue={editingListing.educational_note} />
               <input name="photo_url" placeholder="Photo URL" defaultValue={editingListing.photo_url} />
-              <select name="status" defaultValue={editingListing.status ?? 'available'}><option>available</option><option>reserved</option><option>sold</option></select>
+              <select name="status" defaultValue={editingListing.status === 'sold' ? 'sold' : 'available'}><option>available</option><option>sold</option></select>
+              <select name="publish_state" defaultValue={editingListing.publish_state ?? 'draft'}><option>draft</option><option>published</option></select>
               <button className="btn btn-primary" type="submit">Save Listing</button>
               <button className={styles.copyBtn} type="button" onClick={() => setEditingListing(null)}>Cancel</button>
+              {editingListing.id && <section className={extra.galleryImageManager}>
+                <div className={extra.galleryImageHead}>
+                  <div><strong>Gallery images</strong><small>Upload alternate views, reorder them, and choose the card/primary image.</small></div>
+                  <label className={extra.galleryUploadButton}>{uploadingListingImages ? 'Uploading…' : 'Upload images'}<input type="file" accept="image/jpeg,image/png,image/webp,image/avif" multiple disabled={uploadingListingImages} onChange={event => { const listing = editingListing as Listing; void uploadListingImages(listing, Array.from(event.target.files ?? [])); event.target.value = ''; }} /></label>
+                </div>
+                <div className={extra.galleryImageGrid}>{listingImages.filter(image => image.listing_id === editingListing.id).sort((a,b) => a.sort_order - b.sort_order).map((image, index) => <article key={image.id} className={extra.galleryImageCard}>
+                  <div className={extra.galleryImagePreview}><img src={image.url} alt={image.alt_text} /><span>{image.is_primary ? 'Primary' : `View ${index + 1}`}</span></div>
+                  <input aria-label={`Alt text for view ${index + 1}`} defaultValue={image.alt_text} onBlur={event => event.target.value !== image.alt_text && updateListingImageAlt(image, event.target.value)} />
+                  <div><button type="button" onClick={() => moveListingImage(editingListing.id!, image.id, -1)} disabled={index === 0}>←</button><button type="button" onClick={() => moveListingImage(editingListing.id!, image.id, 1)} disabled={index === listingImages.filter(item => item.listing_id === editingListing.id).length - 1}>→</button><button type="button" className={image.is_primary ? extra.primarySelected : ''} onClick={() => setPrimaryListingImage(editingListing as Listing, image)}>★ Primary</button></div>
+                </article>)}</div>
+                {listingImages.filter(image => image.listing_id === editingListing.id).length === 0 && <p>No gallery images yet. Upload the primary image and alternate views here.</p>}
+              </section>}
             </form>}
             <table className={styles.table}>
               <thead>

@@ -4,6 +4,9 @@
   "private": true,
   "scripts": {
     "images:generate": "node scripts/generate-image-assets.mjs",
+    "gallery:manifest": "node scripts/import-gallery.mjs",
+    "gallery:preview-assets": "node scripts/generate-gallery-preview-assets.mjs",
+    "test": "node --experimental-strip-types --test tests/*.test.mjs",
     "dev": "next dev",
     "build": "next build",
     "start": "next start"
