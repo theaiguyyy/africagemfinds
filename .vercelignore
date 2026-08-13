@@ -1,0 +1,11 @@
+.git
+.next
+.performance
+.vercel
+node_modules
+AGF Stone pictures
+Founder Pictures
+env.local
+env.local.rtf
+*.log
+.DS_Store
