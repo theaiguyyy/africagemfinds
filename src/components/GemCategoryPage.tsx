@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import StickyNav from './StickyNav';
 import Footer from './Footer';
 import styles from './GemCategoryPage.module.css';
@@ -107,7 +108,7 @@ export default function GemCategoryPage({
       const relY = Math.max(0, Math.min(e.clientY - rect.top, rect.height));
       lens.style.left = (relX - lensSize / 2) + 'px';
       lens.style.top = (relY - lensSize / 2) + 'px';
-      lens.style.backgroundImage = `url(${img.src})`;
+      if (cmsHero) lens.style.backgroundImage = `url(${cmsHero})`;
       lens.style.backgroundSize = `${rect.width * zoom}px ${rect.height * zoom}px`;
       lens.style.backgroundPosition = `${-relX * zoom + lensSize / 2}px ${-relY * zoom + lensSize / 2}px`;
     }
@@ -122,7 +123,7 @@ export default function GemCategoryPage({
         banner.removeEventListener('mouseenter', moveLens);
       }
     };
-  }, []);
+  }, [cmsHero]);
 
   return (
     <>
@@ -131,7 +132,7 @@ export default function GemCategoryPage({
       {/* Hero banner */}
       <header className={`${styles.catHero} cat-hero`}>
         {cmsHero
-          ? <img ref={bannerImgRef} src={cmsHero} alt={name} className={`${styles.catHeroBg} cat-hero-bg-img`} fetchPriority="high" decoding="async" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+          ? <Image ref={bannerImgRef} src={cmsHero} alt={name} className={`${styles.catHeroBg} cat-hero-bg-img`} fill sizes="100vw" quality={95} preload style={{ objectFit: 'cover' }} />
           : <div className={`${styles.catHeroBg} cat-hero-bg-img`} style={{ background: `linear-gradient(135deg, ${accentVar}, #2b241c)` }} />
         }
         <div className={styles.catHeroScrim} />
@@ -178,7 +179,7 @@ export default function GemCategoryPage({
             {cmsSpecimens.map(s => (
               <div key={s.key ?? `${s.id}-${s.img ?? ''}`} className={`${styles.specCard} specimen-card`}>
                 {s.img
-                  ? <img src={s.img} alt={s.id} className={styles.specPhotoImg} loading="lazy" decoding="async" />
+                  ? <Image src={s.img} alt={s.id} className={styles.specPhotoImg} fill sizes="(max-width: 620px) 100vw, (max-width: 1000px) 50vw, 33vw" quality={95} loading="lazy" />
                   : <div className={styles.specPhotoPlaceholder} style={{ background: `linear-gradient(135deg, ${accentVar}44, #2b241c)` }} />
                 }
                 <div className={styles.specScrim} />

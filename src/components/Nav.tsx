@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import Image from 'next/image';
 import styles from './Nav.module.css';
 
 export default function Nav({ transparent = false }: { transparent?: boolean }) {
@@ -44,7 +45,7 @@ export default function Nav({ transparent = false }: { transparent?: boolean }) 
       id="nav"
     >
       <Link href="/" className={styles.navLogo}>
-        <img src="/africa-gem-finds-logo-transparent.png" alt="Africa Gem Finds" />
+        <Image src="/africa-gem-finds-logo-nav.png" alt="Africa Gem Finds" width={359} height={216} quality={95} loading="eager" />
       </Link>
       <button className={styles.menuButton} type="button" aria-label={menuOpen ? 'Close menu' : 'Open menu'} aria-expanded={menuOpen} aria-controls="mobile-navigation" onClick={() => setMenuOpen(open => !open)}>
         <span /><span /><span />

@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import ReactMarkdown from 'react-markdown';
 import StickyNav from '@/components/StickyNav';
 import Footer from '@/components/Footer';
@@ -86,7 +87,7 @@ export default function BlogPostPage() {
       </div>
 
       <div className={`${styles.artHero} reveal`}>
-        <img src={cmsPost?.cover_url || '/images/Stone34-536.jpg'} alt={cmsPost?.title || 'Gemologist inspecting rough aquamarine under a loupe'} fetchPriority="high" decoding="async" />
+        <Image src={cmsPost?.cover_url || '/images/Stone34-536.jpg'} alt={cmsPost?.title || 'Gemologist inspecting rough aquamarine under a loupe'} fill sizes="100vw" quality={95} preload style={{ objectFit: 'cover' }} />
       </div>
 
       <div className="container">
@@ -112,7 +113,7 @@ export default function BlogPostPage() {
           <p>For anyone buying rough with cutting in mind, shape matters as much as color or clarity. A well-formed crystal with clean, even faces will generally yield more finished carat weight than a fractured or oddly shaped piece of the same rough weight.</p>
 
           <figure className={styles.inlinePhoto}>
-            <img src="/images/Stone2-040.jpg" alt="Rough aquamarine crystals" loading="lazy" decoding="async" />
+            <Image src="/images/Stone2-040.jpg" alt="Rough aquamarine crystals" width={3643} height={4554} sizes="(max-width: 900px) 100vw, 760px" quality={95} loading="lazy" />
             <figcaption>Aquamarine rough showing typical elongated crystal habit</figcaption>
           </figure>
 

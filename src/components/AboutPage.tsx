@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import styles from './AboutPage.module.css';
 
 export default function AboutPage() {
@@ -58,7 +59,13 @@ export default function AboutPage() {
     };
 
     let disposeAnimations: (() => void) | undefined;
-    init().then(dispose => { disposeAnimations = dispose; });
+    const startAnimations = () => {
+      const requestIdle = (window as Window & { requestIdleCallback?: (callback: IdleRequestCallback, options?: IdleRequestOptions) => number }).requestIdleCallback;
+      if (requestIdle) requestIdle(() => init().then(dispose => { disposeAnimations = dispose; }), { timeout: 1800 });
+      else globalThis.setTimeout(() => init().then(dispose => { disposeAnimations = dispose; }), 1);
+    };
+    if (document.readyState === 'complete') startAnimations();
+    else window.addEventListener('load', startAnimations, { once: true });
 
     // Story loupe
     const lensSize = 170, zoom = 2.2;
@@ -73,7 +80,7 @@ export default function AboutPage() {
       const relY = Math.max(0, Math.min(e.clientY - rect.top, rect.height));
       lens.style.left = (relX - lensSize / 2) + 'px';
       lens.style.top = (relY - lensSize / 2) + 'px';
-      lens.style.backgroundImage = `url(${img.src})`;
+      lens.style.backgroundImage = "url('/images/about-how-it-started.jpg')";
       lens.style.backgroundSize = `${rect.width * zoom}px ${rect.height * zoom}px`;
       lens.style.backgroundPosition = `${-relX * zoom + lensSize / 2}px ${-relY * zoom + lensSize / 2}px`;
     }
@@ -84,6 +91,7 @@ export default function AboutPage() {
     }
     return () => {
       cancelled = true;
+      window.removeEventListener('load', startAnimations);
       disposeAnimations?.();
       if (frame) {
         frame.removeEventListener('mousemove', moveLens);
@@ -96,12 +104,11 @@ export default function AboutPage() {
     <main ref={pageRef}>
       {/* HERO */}
       <header className={styles.hero}>
-        <img
+        <Image
           src="/images/about-family-inspection.jpg"
           alt="Founders of African Gem Finds"
           className={`${styles.heroImg} about-photo`}
-          fetchPriority="high"
-          decoding="async"
+          fill sizes="100vw" quality={95} preload
         />
         <div className={styles.heroScrim} />
         <div className={styles.heroContent}>
@@ -117,13 +124,14 @@ export default function AboutPage() {
       <section className={styles.story}>
         <div className={`container ${styles.storyGrid}`}>
           <div className={`${styles.storyFrame} reveal`} ref={storyFrameRef}>
-            <img
+            <Image
               ref={storyImgRef}
               src="/images/about-how-it-started.jpg"
               alt="Founder inspecting rough aquamarine"
               className={styles.storyFrameImg}
               loading="lazy"
               decoding="async"
+              fill sizes="(max-width: 900px) 100vw, 50vw" quality={95}
             />
             <div className={styles.storyLens} ref={storyLensRef} />
             <div className={styles.storyHint}>Hover to inspect</div>
@@ -158,7 +166,7 @@ export default function AboutPage() {
 
       {/* AUTHENTICATION — full bleed */}
       <section className={styles.authBleed}>
-        <div className={styles.authBg} style={{ backgroundImage: "url('/images/Stone34-592.jpg')" }} />
+        <div className={styles.authBg}><Image src="/images/Stone34-592.jpg" alt="Founder inspecting a gemstone" fill sizes="100vw" quality={95} loading="lazy" style={{ objectFit: 'cover', objectPosition: '50% 38%' }} /></div>
         <div className={styles.authScrim} />
         <div className={styles.authInner}>
           <span className="eyebrow" style={{ color: '#EFE6D2' }}>Authentication &amp; Quality</span>
@@ -212,7 +220,7 @@ export default function AboutPage() {
 
       {/* SERVE BLEED */}
       <section className={styles.serveBleed}>
-        <div className={styles.serveBg} style={{ backgroundImage: "url('/images/about-who-we-serve.jpg')" }} />
+        <div className={styles.serveBg}><Image src="/images/about-who-we-serve.jpg" alt="African Gem Finds founders" fill sizes="100vw" quality={95} loading="lazy" style={{ objectFit: 'cover', objectPosition: '50% 30%' }} /></div>
         <div className={styles.serveScrim} />
         <div className={`${styles.serveInner} reveal`}>
           <span className="eyebrow" style={{ color: '#EFE6D2', justifyContent: 'center' }}>Who We Serve</span>

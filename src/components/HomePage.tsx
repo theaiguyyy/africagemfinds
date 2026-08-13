@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import styles from './HomePage.module.css';
 
 const heroStops = [
@@ -26,6 +27,11 @@ const categories = [
 
 export default function HomePage() {
   const [categoryCards, setCategoryCards] = useState(categories);
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [readySlides, setReadySlides] = useState(() => new Set([0]));
+  const [heroInView, setHeroInView] = useState(true);
+  const [pageVisible, setPageVisible] = useState(true);
+  const [reduceMotion, setReduceMotion] = useState(false);
   const currentRef = useRef(0);
   const slidesRef = useRef<HTMLDivElement[]>([]);
   const dotsRef = useRef<HTMLDivElement[]>([]);
@@ -34,6 +40,10 @@ export default function HomePage() {
   const trustVisualRef = useRef<HTMLDivElement>(null);
   const trustLensRef = useRef<HTMLDivElement>(null);
   const trustImgRef = useRef<HTMLImageElement>(null);
+  const heroRef = useRef<HTMLElement>(null);
+  const reduceMotionRef = useRef(false);
+  const heroLoadedRef = useRef(false);
+  const carouselStartedRef = useRef(false);
 
   useEffect(() => {
     let active = true;
@@ -64,19 +74,7 @@ export default function HomePage() {
 
       // §6.1 Hero cinematic enter — handled by CSS animations in HomePage.module.css
 
-      // §6.3 Nav scroll shrink
-      const nav = document.getElementById('nav');
-      if (nav) {
-        window.addEventListener('scroll', () => {
-          const scrolled = window.scrollY > 60;
-          gsap.to('#nav', {
-            paddingTop: scrolled ? '10px' : '28px',
-            paddingBottom: scrolled ? '10px' : '28px',
-            duration: 0.4,
-            ease: 'power2.out',
-          });
-        }, { passive: true });
-      }
+      // Nav shrink is handled by Nav.tsx/CSS; avoid a duplicate scroll listener here.
 
       // §6.4 Category grid stagger
       const gemCards = gsap.utils.toArray('.cat-card');
@@ -112,7 +110,13 @@ export default function HomePage() {
       });
     };
 
-    init();
+    const startAnimations = () => {
+      const requestIdle = (window as Window & { requestIdleCallback?: (callback: IdleRequestCallback, options?: IdleRequestOptions) => number }).requestIdleCallback;
+      if (requestIdle) requestIdle(() => init(), { timeout: 1800 });
+      else globalThis.setTimeout(init, 1);
+    };
+    if (document.readyState === 'complete') startAnimations();
+    else window.addEventListener('load', startAnimations, { once: true });
 
     // Hero slideshow
     function goTo(next: number) {
@@ -125,11 +129,21 @@ export default function HomePage() {
         heroTagRef.current.textContent = heroStops[next].label + ' · Bangkok';
       }
       currentRef.current = next;
+      setCurrentSlide(next);
+      setReadySlides(current => new Set(current).add(next));
     }
 
-    intervalRef.current = setInterval(() => {
-      goTo((currentRef.current + 1) % heroStops.length);
-    }, 5000);
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    reduceMotionRef.current = reducedMotion.matches;
+    setReduceMotion(reducedMotion.matches);
+    const onMotionChange = () => { reduceMotionRef.current = reducedMotion.matches; setReduceMotion(reducedMotion.matches); };
+    reducedMotion.addEventListener('change', onMotionChange);
+    const onVisibilityChange = () => setPageVisible(document.visibilityState === 'visible');
+    onVisibilityChange();
+    document.addEventListener('visibilitychange', onVisibilityChange);
+
+    const heroObserver = new IntersectionObserver(([entry]) => setHeroInView(entry.isIntersecting), { threshold: 0.05 });
+    if (heroRef.current) heroObserver.observe(heroRef.current);
 
     // Trust loupe (§6.9 — plain JS, do not GSAP)
     const lensSize = 170;
@@ -145,7 +159,7 @@ export default function HomePage() {
       const relY = Math.max(0, Math.min(e.clientY - rect.top, rect.height));
       lens.style.left = (relX - lensSize / 2) + 'px';
       lens.style.top = (relY - lensSize / 2) + 'px';
-      lens.style.backgroundImage = `url(${img.src})`;
+      lens.style.backgroundImage = "url('/images/Stone34-559.jpg')";
       lens.style.backgroundSize = `${rect.width * zoom}px ${rect.height * zoom}px`;
       lens.style.backgroundPosition = `${-relX * zoom + lensSize / 2}px ${-relY * zoom + lensSize / 2}px`;
     }
@@ -157,13 +171,50 @@ export default function HomePage() {
 
     return () => {
       cancelled = true;
+      window.removeEventListener('load', startAnimations);
       if (intervalRef.current) clearInterval(intervalRef.current);
+      reducedMotion.removeEventListener('change', onMotionChange);
+      document.removeEventListener('visibilitychange', onVisibilityChange);
+      heroObserver.disconnect();
       if (visual) {
         visual.removeEventListener('mousemove', moveLens);
         visual.removeEventListener('mouseenter', moveLens);
       }
     };
   }, []);
+
+  useEffect(() => {
+    slidesRef.current.forEach((slide, index) => slide?.classList.toggle(styles.active, index === currentSlide));
+    dotsRef.current.forEach((dot, index) => dot?.classList.toggle(styles.dotActive, index === currentSlide));
+    if (heroTagRef.current) heroTagRef.current.textContent = `${heroStops[currentSlide].label} · Bangkok`;
+  }, [currentSlide]);
+
+  useEffect(() => {
+    if (!heroInView || !pageVisible || reduceMotion) return;
+    const delay = carouselStartedRef.current ? 5000 : 8000;
+    const preloadTimer = window.setTimeout(() => {
+      const next = (currentRef.current + 1) % heroStops.length;
+      setReadySlides(current => new Set(current).add(next));
+    }, delay - 1000);
+    const advanceTimer = window.setTimeout(() => {
+      const next = (currentRef.current + 1) % heroStops.length;
+      setReadySlides(current => new Set(current).add(next));
+      setCurrentSlide(next);
+      currentRef.current = next;
+      carouselStartedRef.current = true;
+    }, delay);
+    return () => { window.clearTimeout(preloadTimer); window.clearTimeout(advanceTimer); };
+  }, [heroInView, pageVisible, reduceMotion, currentSlide]);
+
+  const prepareNextSlide = () => {
+    if (heroLoadedRef.current) return;
+    heroLoadedRef.current = true;
+    const next = 1;
+    const prepare = () => setReadySlides(current => new Set(current).add(next));
+    const requestIdle = (window as Window & { requestIdleCallback?: (callback: IdleRequestCallback, options?: IdleRequestOptions) => number }).requestIdleCallback;
+    if (requestIdle) requestIdle(prepare, { timeout: 1800 });
+    else globalThis.setTimeout(prepare, 600);
+  };
 
   const handleDotClick = (i: number) => {
     if (intervalRef.current) clearInterval(intervalRef.current);
@@ -176,15 +227,9 @@ export default function HomePage() {
     dots[i]?.classList.add(styles.dotActive);
     if (heroTagRef.current) heroTagRef.current.textContent = heroStops[i].label + ' · Bangkok';
     currentRef.current = i;
-    intervalRef.current = setInterval(() => {
-      const next = (currentRef.current + 1) % heroStops.length;
-      slides[currentRef.current]?.classList.remove(styles.active);
-      slides[next]?.classList.add(styles.active);
-      dots.forEach(d => d?.classList.remove(styles.dotActive));
-      dots[next]?.classList.add(styles.dotActive);
-      if (heroTagRef.current) heroTagRef.current.textContent = heroStops[next].label + ' · Bangkok';
-      currentRef.current = next;
-    }, 5000);
+    carouselStartedRef.current = true;
+    setReadySlides(current => new Set(current).add(i));
+    setCurrentSlide(i);
   };
 
   const handleContactSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -226,15 +271,15 @@ export default function HomePage() {
   return (
     <>
       {/* HERO */}
-      <header className={styles.hero} id="hero">
+      <header className={styles.hero} id="hero" ref={heroRef}>
         <div id="heroSlides">
           {heroStops.map((s, i) => (
             <div
               key={i}
-              className={`${styles.heroSlide} ${i === 0 ? styles.active : ''}`}
+              className={`${styles.heroSlide} ${i === currentSlide ? styles.active : ''}`}
               ref={el => { if (el) slidesRef.current[i] = el; }}
             >
-              <img src={s.img} alt={s.label} loading={i === 0 ? 'eager' : 'lazy'} fetchPriority={i === 0 ? 'high' : 'low'} decoding="async" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+              {readySlides.has(i) && <Image src={s.img} alt={s.label} fill sizes="100vw" quality={95} preload={i === 0} onLoad={i === 0 ? prepareNextSlide : undefined} style={{ objectFit: 'cover' }} />}
             </div>
           ))}
         </div>
@@ -277,7 +322,7 @@ export default function HomePage() {
 
       {/* MISSION */}
       <section className={`${styles.missionBleed} reveal mission-band`}>
-        <div className={`${styles.missionBg} mission-bg`} style={{ backgroundImage: "url('/images/Stone10-139.jpg')" }} />
+        <div className={`${styles.missionBg} mission-bg`}><Image src="/images/Stone10-139.jpg" alt="" fill sizes="100vw" quality={95} loading="lazy" style={{ objectFit: 'cover' }} /></div>
         <div className={styles.missionScrim} />
         <div className={styles.missionInner}>
           <div className={styles.missionMark}>&ldquo;</div>
@@ -322,7 +367,7 @@ export default function HomePage() {
             <Link key={c.name} href={c.href} className={`${styles.catCard} cat-card`}>
               {c.empty
                 ? <div className={styles.catEmpty} style={{ background: `linear-gradient(135deg, ${c.color}, #2b241c)` }} />
-                : <img src={c.img!} alt={c.name} className={styles.catImg} loading="lazy" decoding="async" />
+                : <Image src={c.img!} alt={c.name} className={styles.catImg} fill sizes="(max-width: 620px) 100vw, (max-width: 1000px) 50vw, 33vw" quality={95} loading="lazy" />
               }
               <div className={styles.catScrim} />
               <div className={styles.catLabel}>
@@ -340,14 +385,15 @@ export default function HomePage() {
       <section className={styles.trust}>
         <div className={styles.trustGrid}>
           <div className={`${styles.trustVisual} reveal`} ref={trustVisualRef} id="trustVisual">
-            <img
+            <Image
               ref={trustImgRef}
               src="/images/Stone34-559.jpg"
               alt="Africa Gem Finds team inspecting rough aquamarine"
               id="trustImg"
               loading="lazy"
               decoding="async"
-              style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
+              fill sizes="(max-width: 1000px) 100vw, 55vw" quality={95}
+              style={{ objectFit: 'cover' }}
             />
             <div className={styles.trustLens} ref={trustLensRef} id="trustLens" />
             <div className={styles.trustHint}>Hover to inspect</div>
@@ -376,7 +422,7 @@ export default function HomePage() {
 
       {/* STORY */}
       <section className={`${styles.storyBleed} reveal story-bleed`} id="story">
-        <div className={`${styles.storyBg} story-bg`} style={{ backgroundImage: "url('/images/Stone34-619.jpg')" }} />
+        <div className={`${styles.storyBg} story-bg`}><Image src="/images/Stone34-619.jpg" alt="" fill sizes="100vw" quality={95} loading="lazy" style={{ objectFit: 'cover' }} /></div>
         <div className={styles.storyScrim} />
         <div className={styles.storyInner}>
           <span className="eyebrow" style={{ color: '#EFE6D2' }}>Our Story</span>
@@ -389,7 +435,7 @@ export default function HomePage() {
       {/* CONTACT */}
       <section className={`${styles.contact} contact-band`} id="contact">
         <div className={styles.contactVisual}>
-          <img src="/images/Stone15-205.jpg" alt="Morganite rough gemstones" loading="lazy" decoding="async" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+          <Image src="/images/Stone15-205.jpg" alt="Morganite rough gemstones" fill sizes="(max-width: 1000px) 100vw, 50vw" quality={95} loading="lazy" style={{ objectFit: 'cover' }} />
           <div className={styles.contactTag}>Morganite, Africa</div>
         </div>
         <div className={styles.contactFormWrap}>
