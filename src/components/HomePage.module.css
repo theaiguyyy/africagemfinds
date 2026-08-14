@@ -514,10 +514,10 @@
   margin: 22px 0 24px;
 }
 
-.storyAttr { font-size: 13px; letter-spacing: 0.03em; color: rgba(255,255,255,0.7); }
+.storyAttr { display: block; font-size: 13px; letter-spacing: 0.03em; color: rgba(255,255,255,0.7); }
 
 .storyLink {
-  margin-top: 32px;
+  margin-top: 38px;
   display: inline-flex;
   align-items: center;
   gap: 10px;

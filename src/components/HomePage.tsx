@@ -266,7 +266,7 @@ export default function HomePage() {
           </p>
           <div className={styles.heroActions}>
             <div className={`${styles.heroActionsInner} hero-actions`} id="heroActions">
-              <Link href="/gems/aquamarine" className="btn btn-primary">View the Collection</Link>
+              <Link href="/gallery" className="btn btn-primary">View the Collection</Link>
               <Link href="/contact" className="btn btn-ghost">Inquire Direct</Link>
             </div>
           </div>

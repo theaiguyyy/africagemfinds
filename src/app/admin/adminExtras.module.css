@@ -148,3 +148,4 @@
 .galleryImageCard button { padding: 6px 8px; border: 1px solid var(--line); background: #fff; cursor: pointer; font-size: 10px; }
 .galleryImageCard button:disabled { opacity: .35; cursor: default; }
 .galleryImageCard .primarySelected { margin-left: auto; background: var(--amber); color: #fff; }
+.soldHelp { display:block; max-width:150px; margin-top:5px; color:var(--ink-soft); font-size:9px; line-height:1.4; }

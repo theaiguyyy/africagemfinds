@@ -212,9 +212,9 @@ export default function AboutPage() {
           <div className={`${styles.catCta} reveal`}>
             <div>
               <h3>Ready to see what&apos;s available?</h3>
-              <p>Browse our current gem categories, or message us directly if you already know what you&apos;re after.</p>
+              <p>Browse our current gem gallery, or message us directly if you already know what you&apos;re after.</p>
             </div>
-            <Link href="/gems/aquamarine" className="btn btn-primary">Browse Gem Categories</Link>
+            <Link href="/gallery" className="btn btn-primary">Browse Gem Gallery</Link>
           </div>
         </div>
       </section>

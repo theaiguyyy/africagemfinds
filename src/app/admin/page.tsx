@@ -232,8 +232,19 @@ export default function AdminPage() {
       : await supabase.from('listings').insert({ ...payload, position: listings.length }).select().single();
     if (result.error) { notify('error', result.error.message); return; }
     setListings(current => editingListing?.id ? current.map(item => item.id === result.data.id ? result.data as Listing : item) : [...current, result.data as Listing]);
-    setEditingListing(null);
-    notify('saved', 'Listing saved and published to the catalog.');
+    setEditingListing(result.data as Listing);
+    notify('saved', editingListing?.id ? 'Listing changes saved.' : 'Stone created. You can upload its gallery images below.');
+  }
+
+  async function toggleListingStatus(listing: Listing) {
+    const next = listing.status === 'sold' ? 'available' : 'sold';
+    const { getSupabaseBrowserClient } = await import('@/lib/supabase/client');
+    notify('saving', `Marking ${listing.title} as ${next}…`);
+    const { error } = await getSupabaseBrowserClient().from('listings').update({ status: next }).eq('id', listing.id);
+    if (error) { notify('error', error.message); return; }
+    setListings(current => current.map(item => item.id === listing.id ? { ...item, status: next } : item));
+    setEditingListing(current => current?.id === listing.id ? { ...current, status: next } : current);
+    notify('saved', next === 'sold' ? 'Marked sold. Visitors can still ask for similar material.' : 'Marked available and visible as current inventory.');
   }
 
   async function readImageSize(file: File) {
@@ -502,7 +513,7 @@ export default function AdminPage() {
           <div className={styles.panel}>
             <div className={styles.panelHeader}>
               <div><h1 className={styles.panelTitle}>Listings</h1><p>Manage and reorder the specimens visible on the website</p></div>
-              <button className="btn btn-primary" onClick={() => setEditingListing({ status: 'available' })}>Add Listing</button>
+              <button className="btn btn-primary" onClick={() => setEditingListing({ status: 'available', publish_state: 'draft' })}>Add Gallery Stone</button>
             </div>
             {editingListing && <form className={styles.editor} onSubmit={saveListing}>
               <input name="title" placeholder="Listing title" defaultValue={editingListing.title} required />
@@ -513,14 +524,14 @@ export default function AdminPage() {
               <input name="origin" placeholder="Origin country" defaultValue={editingListing.origin} />
               <input name="public_weight_label" placeholder="Public weight label" defaultValue={editingListing.public_weight_label ?? editingListing.weight} />
               <input name="raw_source_weight_note" placeholder="Raw source weight note" defaultValue={editingListing.raw_source_weight_note} />
-              <input name="form" placeholder="Form" defaultValue={editingListing.form} />
+              <input name="form" placeholder="Crystal form (optional, internal detail)" defaultValue={editingListing.form} />
               <input name="colour" placeholder="Colour" defaultValue={editingListing.colour} />
               <textarea name="description" placeholder="Verified lot description" defaultValue={editingListing.description} />
-              <textarea name="educational_note" placeholder="General educational note" defaultValue={editingListing.educational_note} />
+              <textarea name="educational_note" placeholder="Educational gemstone fact shown in the Gallery detail view" defaultValue={editingListing.educational_note} />
               <input name="photo_url" placeholder="Photo URL" defaultValue={editingListing.photo_url} />
               <select name="status" defaultValue={editingListing.status === 'sold' ? 'sold' : 'available'}><option>available</option><option>sold</option></select>
               <select name="publish_state" defaultValue={editingListing.publish_state ?? 'draft'}><option>draft</option><option>published</option></select>
-              <button className="btn btn-primary" type="submit">Save Listing</button>
+              <button className="btn btn-primary" type="submit">Save Listing Details</button>
               <button className={styles.copyBtn} type="button" onClick={() => setEditingListing(null)}>Cancel</button>
               {editingListing.id && <section className={extra.galleryImageManager}>
                 <div className={extra.galleryImageHead}>
@@ -550,9 +561,9 @@ export default function AdminPage() {
                     <td className={styles.orderCell}>↕ {l.position + 1}</td>
                     <td><div className={styles.specimenCell}>{l.photo_url && <img src={l.photo_url} alt="" />}<div><strong>{l.title}</strong><small>{l.slug}</small></div></div></td>
                     <td>{l.category}</td>
-                    <td><span className={`${styles.badge} ${styles[l.status]}`}>{l.status}</span></td>
+                    <td><span className={`${styles.badge} ${styles[l.status]}`}>{l.status}</span>{l.status === 'sold' && <small className={extra.soldHelp}>Visitors can ask for a similar stone.</small>}</td>
                     <td>{l.weight || '—'}</td>
-                    <td><div className={styles.rowActions}><button onClick={() => moveItem('listings', l.id, -1)} title="Move earlier">↑</button><button onClick={() => moveItem('listings', l.id, 1)} title="Move later">↓</button><button onClick={() => setEditingListing(l)}>Edit</button>{role === 'owner' && <button className={styles.danger} onClick={async () => { const { getSupabaseBrowserClient } = await import('@/lib/supabase/client'); await getSupabaseBrowserClient().from('listings').delete().eq('id', l.id); setListings(v => v.filter(x => x.id !== l.id)); }}>Delete</button>}</div></td>
+                    <td><div className={styles.rowActions}><button onClick={() => moveItem('listings', l.id, -1)} title="Move earlier">↑</button><button onClick={() => moveItem('listings', l.id, 1)} title="Move later">↓</button><button onClick={() => toggleListingStatus(l)}>{l.status === 'sold' ? 'Mark available' : 'Mark sold'}</button><button onClick={() => setEditingListing(l)}>Edit &amp; Images</button>{role === 'owner' && <button className={styles.danger} onClick={async () => { const { getSupabaseBrowserClient } = await import('@/lib/supabase/client'); await getSupabaseBrowserClient().from('listings').delete().eq('id', l.id); setListings(v => v.filter(x => x.id !== l.id)); }}>Delete</button>}</div></td>
                   </tr>
                 ))}
               </tbody>

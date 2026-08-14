@@ -15,6 +15,8 @@ export interface GemSpec {
   origin: string;
   clarity: string;
   img?: string;
+  sku?: string;
+  slug?: string;
 }
 
 interface Props {
@@ -55,13 +57,14 @@ export default function GemCategoryPage({
       if (!hasSupabaseConfig()) return;
       const { getSupabaseBrowserClient } = await import('@/lib/supabase/client');
       const supabase = getSupabaseBrowserClient();
+      const galleryFamily = name === 'Rubylite' ? 'Rubellite' : name;
       const [{ data: cover }, { data: rows }] = await Promise.all([
         supabase.from('media').select('url').eq('category', name).eq('featured', true).maybeSingle(),
-        supabase.from('listings').select('*').eq('category', name).in('status', ['available', 'reserved']).not('title', 'ilike', '% cover').order('position'),
+        supabase.from('listings').select('*').eq('gemstone_family', galleryFamily).eq('publish_state', 'published').eq('status', 'available').like('sku', 'AGF-GAL-%').order('position'),
       ]);
       if (!active) return;
       if (cover?.url) setCmsHero(cover.url);
-      if (rows) setCmsSpecimens(rows.map((row: Record<string, any>) => ({ key: row.id, id: row.title, weight: row.weight || 'Weight on request', origin: row.origin || 'Africa', clarity: row.status === 'reserved' ? 'Reserved' : 'Available', img: row.photo_url })));
+      if (rows?.length) setCmsSpecimens(rows.map((row: Record<string, any>) => ({ key: row.id, id: row.title, sku: row.sku, slug: row.slug, weight: row.public_weight_label || row.weight || 'Weight on request', origin: row.origin || 'Africa', clarity: row.status === 'sold' ? 'Sold' : 'Available', img: row.photo_url })));
     });
     return () => { active = false; };
   }, [name]);
@@ -177,7 +180,7 @@ export default function GemCategoryPage({
         {cmsSpecimens.length > 0 ? (
           <div className={styles.specGrid}>
             {cmsSpecimens.map(s => (
-              <div key={s.key ?? `${s.id}-${s.img ?? ''}`} className={`${styles.specCard} specimen-card`}>
+              <Link key={s.key ?? `${s.id}-${s.img ?? ''}`} href={s.key ? `/gallery?stone=${encodeURIComponent(s.key)}` : `/gallery?search=${encodeURIComponent(s.id)}`} className={`${styles.specCard} specimen-card`} aria-label={`View ${s.id} in the gallery`}>
                 {s.img
                   ? <Image src={s.img} alt={s.id} className={styles.specPhotoImg} fill sizes="(max-width: 620px) 100vw, (max-width: 1000px) 50vw, 33vw" quality={95} loading="lazy" />
                   : <div className={styles.specPhotoPlaceholder} style={{ background: `linear-gradient(135deg, ${accentVar}44, #2b241c)` }} />
@@ -187,9 +190,9 @@ export default function GemCategoryPage({
                 <div className={styles.specLabel}>
                   <div className={styles.specWeight}>{s.weight || 'Weight on request'}</div>
                   <div className={styles.specDetails}><span>{s.origin}</span><span>{name}</span></div>
-                  <Link href="/contact" className={styles.specInquire}>Inquire →</Link>
+                  <span className={styles.specInquire}>View gallery details →</span>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         ) : (

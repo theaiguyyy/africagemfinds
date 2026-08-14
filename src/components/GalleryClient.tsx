@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { GalleryStone } from "@/lib/gallery/types";
 import { gallerySizes, storageVariant } from "@/lib/gallery/images";
-import { inquiryMessage, statusContent } from "@/lib/gallery/content";
+import { educationalFact, inquiryMessage, statusContent } from "@/lib/gallery/content";
 import styles from "./GalleryClient.module.css";
 
 export default function GalleryClient({ stones }: { stones: GalleryStone[] }) {
@@ -20,6 +20,16 @@ export default function GalleryClient({ stones }: { stones: GalleryStone[] }) {
   const openerRef = useRef<HTMLElement | null>(null);
   const families = ["All", ...new Set(stones.map((s) => s.family))];
   const origins = ["All", ...new Set(stones.map((s) => s.origin))];
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const stoneRef = params.get("stone");
+    const initialSearch = params.get("search");
+    if (initialSearch) setSearch(initialSearch);
+    if (stoneRef) {
+      const match = stones.find((stone) => [stone.id, stone.sku, stone.slug].includes(stoneRef));
+      if (match) { setSelected(match); setImageIndex(0); }
+    }
+  }, [stones]);
   const visible = useMemo(
     () =>
       stones.filter(
@@ -37,10 +47,12 @@ export default function GalleryClient({ stones }: { stones: GalleryStone[] }) {
     openerRef.current = target;
     setSelected(stone);
     setImageIndex(0);
+    window.history.replaceState(null, "", `/gallery?stone=${encodeURIComponent(stone.id)}`);
   };
   const close = () => {
     setSelected(null);
     setInquire(false);
+    window.history.replaceState(null, "", "/gallery");
     requestAnimationFrame(() => openerRef.current?.focus());
   };
   useEffect(() => {
@@ -124,33 +136,9 @@ export default function GalleryClient({ stones }: { stones: GalleryStone[] }) {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
-        <select
-          aria-label="Gemstone family"
-          value={family}
-          onChange={(e) => setFamily(e.target.value)}
-        >
-          {families.map((x) => (
-            <option key={x}>{x}</option>
-          ))}
-        </select>
-        <select
-          aria-label="Origin"
-          value={origin}
-          onChange={(e) => setOrigin(e.target.value)}
-        >
-          {origins.map((x) => (
-            <option key={x}>{x}</option>
-          ))}
-        </select>
-        <select
-          aria-label="Status"
-          value={status}
-          onChange={(e) => setStatus(e.target.value)}
-        >
-          <option>All</option>
-          <option>Available</option>
-          <option>Sold</option>
-        </select>
+        <label><span>Gemstone</span><select aria-label="Gemstone family" value={family} onChange={(e) => setFamily(e.target.value)}>{families.map((x) => <option key={x} value={x}>{x === "All" ? "All gemstones" : x}</option>)}</select></label>
+        <label><span>Origin</span><select aria-label="Origin" value={origin} onChange={(e) => setOrigin(e.target.value)}>{origins.map((x) => <option key={x} value={x}>{x === "All" ? "All origins" : x}</option>)}</select></label>
+        <label><span>Availability</span><select aria-label="Status" value={status} onChange={(e) => setStatus(e.target.value)}><option value="All">All statuses</option><option>Available</option><option>Sold</option></select></label>
         <span>{visible.length} stones</span>
       </section>
       <section className={styles.grid} aria-live="polite">
@@ -255,23 +243,15 @@ export default function GalleryClient({ stones }: { stones: GalleryStone[] }) {
                   <dt>Weight</dt>
                   <dd>{selected.publicWeight}</dd>
                 </div>
-                <div>
-                  <dt>Form</dt>
-                  <dd>{selected.form}</dd>
-                </div>
+                <div><dt>Material</dt><dd>{selected.family}</dd></div>
                 <div>
                   <dt>Status</dt>
                   <dd>{selected.status}</dd>
                 </div>
               </dl>
               {selected.description && <p>{selected.description}</p>}
-              {selected.educationalNote && (
-                <aside>
-                  <strong>About this material</strong>
-                  <p>{selected.educationalNote}</p>
-                </aside>
-              )}
-              <p>{statusContent(selected.status).supporting}</p>
+              <aside><strong>Gemstone note</strong><p>{educationalFact(selected)}</p></aside>
+              <p className={styles.supporting}>{statusContent(selected.status).supporting}</p>
               <button className={styles.cta} onClick={() => setInquire(true)}>
                 {statusContent(selected.status).cta}
               </button>
