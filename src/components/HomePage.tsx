@@ -32,15 +32,17 @@ export default function HomePage() {
   const [heroInView, setHeroInView] = useState(true);
   const [pageVisible, setPageVisible] = useState(true);
   const [reduceMotion, setReduceMotion] = useState(false);
+  const [carouselActivated, setCarouselActivated] = useState(false);
   const currentRef = useRef(0);
   const slidesRef = useRef<HTMLDivElement[]>([]);
   const dotsRef = useRef<HTMLDivElement[]>([]);
   const heroTagRef = useRef<HTMLSpanElement>(null);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const heroRef = useRef<HTMLElement>(null);
-  const reduceMotionRef = useRef(false);
-  const heroLoadedRef = useRef(false);
   const carouselStartedRef = useRef(false);
+  const [categoryMediaRef, showCategoryMedia] = useNearViewport<HTMLElement>();
+  const [trustMediaRef, showTrustMedia] = useNearViewport<HTMLElement>();
+  const [storyMediaRef, showStoryMedia] = useNearViewport<HTMLElement>();
+  const [contactMediaRef, showContactMedia] = useNearViewport<HTMLElement>();
 
   useEffect(() => {
     let active = true;
@@ -107,33 +109,18 @@ export default function HomePage() {
       });
     };
 
+    let animationsStarted = false;
     const startAnimations = () => {
-      const requestIdle = (window as Window & { requestIdleCallback?: (callback: IdleRequestCallback, options?: IdleRequestOptions) => number }).requestIdleCallback;
-      if (requestIdle) requestIdle(() => init(), { timeout: 1800 });
-      else globalThis.setTimeout(init, 1);
+      if (animationsStarted) return;
+      animationsStarted = true;
+      init();
     };
-    if (document.readyState === 'complete') startAnimations();
-    else window.addEventListener('load', startAnimations, { once: true });
-
-    // Hero slideshow
-    function goTo(next: number) {
-      const prev = currentRef.current;
-      slidesRef.current[prev]?.classList.remove(styles.active);
-      slidesRef.current[next]?.classList.add(styles.active);
-      dotsRef.current.forEach(d => d?.classList.remove(styles.dotActive));
-      dotsRef.current[next]?.classList.add(styles.dotActive);
-      if (heroTagRef.current) {
-        heroTagRef.current.textContent = heroStops[next].label + ' · Bangkok';
-      }
-      currentRef.current = next;
-      setCurrentSlide(next);
-      setReadySlides(current => new Set(current).add(next));
-    }
+    window.addEventListener('scroll', startAnimations, { once: true, passive: true });
+    if (window.scrollY > 0) startAnimations();
 
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-    reduceMotionRef.current = reducedMotion.matches;
     setReduceMotion(reducedMotion.matches);
-    const onMotionChange = () => { reduceMotionRef.current = reducedMotion.matches; setReduceMotion(reducedMotion.matches); };
+    const onMotionChange = () => setReduceMotion(reducedMotion.matches);
     reducedMotion.addEventListener('change', onMotionChange);
     const onVisibilityChange = () => setPageVisible(document.visibilityState === 'visible');
     onVisibilityChange();
@@ -144,13 +131,25 @@ export default function HomePage() {
 
     return () => {
       cancelled = true;
-      window.removeEventListener('load', startAnimations);
-      if (intervalRef.current) clearInterval(intervalRef.current);
+      window.removeEventListener('scroll', startAnimations);
       reducedMotion.removeEventListener('change', onMotionChange);
       document.removeEventListener('visibilitychange', onVisibilityChange);
       heroObserver.disconnect();
     };
   }, []);
+
+  useEffect(() => {
+    if (carouselActivated) return;
+    const activate = () => setCarouselActivated(true);
+    window.addEventListener('pointerdown', activate, { once: true, passive: true });
+    window.addEventListener('wheel', activate, { once: true, passive: true });
+    window.addEventListener('keydown', activate, { once: true });
+    return () => {
+      window.removeEventListener('pointerdown', activate);
+      window.removeEventListener('wheel', activate);
+      window.removeEventListener('keydown', activate);
+    };
+  }, [carouselActivated]);
 
   useEffect(() => {
     slidesRef.current.forEach((slide, index) => slide?.classList.toggle(styles.active, index === currentSlide));
@@ -159,7 +158,7 @@ export default function HomePage() {
   }, [currentSlide]);
 
   useEffect(() => {
-    if (!heroInView || !pageVisible || reduceMotion) return;
+    if (!carouselActivated || !heroInView || !pageVisible || reduceMotion) return;
     const delay = carouselStartedRef.current ? 5000 : 8000;
     const preloadTimer = window.setTimeout(() => {
       const next = (currentRef.current + 1) % heroStops.length;
@@ -173,20 +172,10 @@ export default function HomePage() {
       carouselStartedRef.current = true;
     }, delay);
     return () => { window.clearTimeout(preloadTimer); window.clearTimeout(advanceTimer); };
-  }, [heroInView, pageVisible, reduceMotion, currentSlide]);
-
-  const prepareNextSlide = () => {
-    if (heroLoadedRef.current) return;
-    heroLoadedRef.current = true;
-    const next = 1;
-    const prepare = () => setReadySlides(current => new Set(current).add(next));
-    const requestIdle = (window as Window & { requestIdleCallback?: (callback: IdleRequestCallback, options?: IdleRequestOptions) => number }).requestIdleCallback;
-    if (requestIdle) requestIdle(prepare, { timeout: 1800 });
-    else globalThis.setTimeout(prepare, 600);
-  };
+  }, [carouselActivated, heroInView, pageVisible, reduceMotion, currentSlide]);
 
   const handleDotClick = (i: number) => {
-    if (intervalRef.current) clearInterval(intervalRef.current);
+    setCarouselActivated(true);
     const slides = slidesRef.current;
     const dots = dotsRef.current;
     const prev = currentRef.current;
@@ -248,7 +237,7 @@ export default function HomePage() {
               className={`${styles.heroSlide} ${i === currentSlide ? styles.active : ''}`}
               ref={el => { if (el) slidesRef.current[i] = el; }}
             >
-              {readySlides.has(i) && <Image src={s.img} alt={s.label} fill sizes="100vw" quality={95} preload={i === 0} onLoad={i === 0 ? prepareNextSlide : undefined} style={{ objectFit: 'cover' }} />}
+              {readySlides.has(i) && <Image src={s.img} alt={s.label} fill sizes="100vw" quality={95} preload={i === 0} style={{ objectFit: 'cover' }} />}
             </div>
           ))}
         </div>
@@ -291,7 +280,7 @@ export default function HomePage() {
 
       {/* MISSION */}
       <section className={`${styles.missionBleed} reveal mission-band`}>
-        <div className={`${styles.missionBg} mission-bg`}><Image src="/images/Stone10-139.jpg" alt="" fill sizes="100vw" quality={95} loading="lazy" style={{ objectFit: 'cover' }} /></div>
+        <div className={`${styles.missionBg} mission-bg`}>{carouselActivated && <Image src="/images/Stone10-139.jpg" alt="" fill sizes="100vw" quality={95} loading="lazy" style={{ objectFit: 'cover' }} />}</div>
         <div className={styles.missionScrim} />
         <div className={styles.missionInner}>
           <div className={styles.missionMark}>&ldquo;</div>
@@ -326,7 +315,7 @@ export default function HomePage() {
       </section>
 
       {/* CATEGORIES */}
-      <section className={styles.categories} id="categories">
+      <section className={styles.categories} id="categories" ref={categoryMediaRef}>
         <div className={`${styles.catHead} reveal`}>
           <h2>Six gemstone varieties, sourced across the continent and inspected by hand.</h2>
           <p>Every tile links through to full listings, with sizes and weights for each stone.</p>
@@ -334,7 +323,7 @@ export default function HomePage() {
         <div className={styles.catGrid}>
           {categoryCards.map((c) => (
             <Link key={c.name} href={c.href} className={`${styles.catCard} cat-card`}>
-              {c.empty
+              {c.empty || !showCategoryMedia
                 ? <div className={styles.catEmpty} style={{ background: `linear-gradient(135deg, ${c.color}, #2b241c)` }} />
                 : <Image src={c.img!} alt={c.name} className={styles.catImg} fill sizes="(max-width: 620px) 100vw, (max-width: 1000px) 50vw, 33vw" quality={95} loading="lazy" />
               }
@@ -351,10 +340,10 @@ export default function HomePage() {
       </section>
 
       {/* TRUST / LOUPE */}
-      <section className={styles.trust}>
+      <section className={styles.trust} ref={trustMediaRef}>
         <div className={styles.trustGrid}>
           <div className={`${styles.trustVisual} reveal`} id="trustVisual">
-            <Image
+            {showTrustMedia && <Image
               src="/images/Stone34-559.jpg"
               alt="Africa Gem Finds team inspecting rough aquamarine"
               id="trustImg"
@@ -362,7 +351,7 @@ export default function HomePage() {
               decoding="async"
               fill sizes="(max-width: 1000px) 100vw, 55vw" quality={95}
               style={{ objectFit: 'cover' }}
-            />
+            />}
           </div>
           <div className={`${styles.trustCopy} reveal`}>
             <span className="eyebrow dark-eyebrow c-green">Authentication &amp; Trust</span>
@@ -387,8 +376,8 @@ export default function HomePage() {
       </section>
 
       {/* STORY */}
-      <section className={`${styles.storyBleed} reveal story-bleed`} id="story">
-        <div className={`${styles.storyBg} story-bg`}><Image src="/images/Stone34-619.jpg" alt="" fill sizes="100vw" quality={95} loading="lazy" style={{ objectFit: 'cover' }} /></div>
+      <section className={`${styles.storyBleed} reveal story-bleed`} id="story" ref={storyMediaRef}>
+        <div className={`${styles.storyBg} story-bg`}>{showStoryMedia && <Image src="/images/Stone34-619.jpg" alt="" fill sizes="100vw" quality={95} loading="lazy" style={{ objectFit: 'cover' }} />}</div>
         <div className={styles.storyScrim} />
         <div className={styles.storyInner}>
           <span className="eyebrow" style={{ color: '#EFE6D2' }}>Our Story</span>
@@ -399,9 +388,9 @@ export default function HomePage() {
       </section>
 
       {/* CONTACT */}
-      <section className={`${styles.contact} contact-band`} id="contact">
+      <section className={`${styles.contact} contact-band`} id="contact" ref={contactMediaRef}>
         <div className={styles.contactVisual}>
-          <Image src="/images/Stone15-205.jpg" alt="Morganite rough gemstones" fill sizes="(max-width: 1000px) 100vw, 50vw" quality={95} loading="lazy" style={{ objectFit: 'cover' }} />
+          {showContactMedia && <Image src="/images/Stone15-205.jpg" alt="Morganite rough gemstones" fill sizes="(max-width: 1000px) 100vw, 50vw" quality={95} loading="lazy" style={{ objectFit: 'cover' }} />}
           <div className={styles.contactTag}>Morganite, Africa</div>
         </div>
         <div className={styles.contactFormWrap}>
@@ -438,4 +427,23 @@ export default function HomePage() {
       </section>
     </>
   );
+}
+
+function useNearViewport<T extends Element>(rootMargin = '300px'): [React.RefObject<T | null>, boolean] {
+  const ref = useRef<T>(null);
+  const [nearViewport, setNearViewport] = useState(false);
+
+  useEffect(() => {
+    const element = ref.current;
+    if (!element || nearViewport) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) return;
+      setNearViewport(true);
+      observer.disconnect();
+    }, { rootMargin });
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [nearViewport, rootMargin]);
+
+  return [ref, nearViewport];
 }

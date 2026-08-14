@@ -20,6 +20,7 @@ const spaceMono = Space_Mono({
   weight: ['400', '700'],
   variable: '--font-space-mono',
   display: 'swap',
+  preload: false,
 });
 
 export const metadata: Metadata = {

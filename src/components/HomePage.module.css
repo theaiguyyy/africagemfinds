@@ -47,10 +47,6 @@
   from { opacity: 0; transform: translateY(18px); }
   to   { opacity: 1; transform: translateY(0); }
 }
-@keyframes lineReveal {
-  from { transform: translateY(115%); }
-  to   { transform: translateY(0); }
-}
 @keyframes subReveal {
   from { opacity: 0; transform: translateY(60%); }
   to   { opacity: 1; transform: translateY(0); }
@@ -82,13 +78,7 @@
 }
 
 :global(.line) { overflow: hidden; }
-:global(.line) span { display: block; transform: translateY(115%); }
-:global(.hero-headline .line:nth-child(1)) span {
-  animation: lineReveal 1.15s cubic-bezier(0.215, 0.61, 0.355, 1) 0.5s both;
-}
-:global(.hero-headline .line:nth-child(2)) span {
-  animation: lineReveal 1.15s cubic-bezier(0.215, 0.61, 0.355, 1) 0.6s both;
-}
+:global(.line) span { display: block; }
 
 .heroSub {
   margin-top: 26px;

@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
-import type { GalleryStone } from "@/lib/gallery/types";
+import type { GalleryImage, GalleryStone } from "@/lib/gallery/types";
 import { gallerySizes, storageVariant } from "@/lib/gallery/images";
 import { educationalFact, inquiryMessage, statusContent } from "@/lib/gallery/content";
 import styles from "./GalleryClient.module.css";
@@ -142,7 +142,7 @@ export default function GalleryClient({ stones }: { stones: GalleryStone[] }) {
         <span>{visible.length} stones</span>
       </section>
       <section className={styles.grid} aria-live="polite">
-        {visible.map((stone, index) => {
+        {visible.map((stone) => {
           const primary =
             stone.images.find((i) => i.isPrimary) ?? stone.images[0];
           return (
@@ -151,14 +151,7 @@ export default function GalleryClient({ stones }: { stones: GalleryStone[] }) {
               className={styles.card}
               onClick={(e) => open(stone, e.currentTarget)}
             >
-              <Image
-                src={storageVariant(primary.url, 720)}
-                alt={primary.alt}
-                fill
-                sizes={gallerySizes.card}
-                quality={95}
-                loading={index < 2 ? "eager" : "lazy"}
-              />
+              <DeferredCardImage image={primary} />
               <i className={stone.status === "sold" ? styles.sold : ""}>
                 {stone.status}
               </i>
@@ -261,6 +254,38 @@ export default function GalleryClient({ stones }: { stones: GalleryStone[] }) {
         </div>
       )}
     </main>
+  );
+}
+
+function DeferredCardImage({ image }: { image: GalleryImage }) {
+  const containerRef = useRef<HTMLSpanElement>(null);
+  const [nearViewport, setNearViewport] = useState(false);
+
+  useEffect(() => {
+    const element = containerRef.current;
+    if (!element || nearViewport) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) return;
+      setNearViewport(true);
+      observer.disconnect();
+    }, { rootMargin: "200px" });
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [nearViewport]);
+
+  return (
+    <span ref={containerRef} className={styles.cardMedia}>
+      {nearViewport && (
+        <Image
+          src={storageVariant(image.url, 720)}
+          alt={image.alt}
+          fill
+          sizes={gallerySizes.card}
+          quality={95}
+          loading="lazy"
+        />
+      )}
+    </span>
   );
 }
 
