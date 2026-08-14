@@ -27,5 +27,8 @@ export interface GalleryStone {
   colour: string;
   status: GalleryStatus;
   position: number;
+  publishState: 'published' | 'draft';
+  createdAt: string;
+  updatedAt: string;
   images: GalleryImage[];
 }

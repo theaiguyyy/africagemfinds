@@ -6,6 +6,8 @@ import Image from 'next/image';
 import StickyNav from '@/components/StickyNav';
 import Footer from '@/components/Footer';
 import styles from './blog.module.css';
+import JsonLd from '@/components/JsonLd';
+import { breadcrumbJsonLd, correctRubelliteSpelling } from '@/lib/seo';
 
 type BlogCard = { slug:string; tag:string; title:string; img:string; date:string; read:string; excerpt?:string };
 const fallbackFeatured: BlogCard = { slug:'how-to-evaluate-rough-gemstones', tag:'Education', title:"How to Evaluate Rough Gemstones: A Buyer's Guide", img:'/images/Stone9-129.jpg', date:'Aug 2026', read:'7 min read', excerpt:'What actually separates a good rough stone from an ordinary one, and how to look at color, clarity, and crystal shape before you buy.' };
@@ -20,7 +22,7 @@ export default function BlogListPage() {
       if (!hasSupabaseConfig()) return;
       const { getSupabaseBrowserClient } = await import('@/lib/supabase/client');
       const { data } = await getSupabaseBrowserClient().from('blog_posts').select('*').eq('published', true).order('position');
-      if (active && data?.length) setVisiblePosts(data.map((post: Record<string, any>) => ({ slug: post.slug, tag: post.tag, title: post.title, img: post.cover_url || '/images/Stone9-129.jpg', excerpt: post.excerpt, date: post.published_at ? new Date(post.published_at).toLocaleDateString('en', { month: 'short', year: 'numeric' }) : '', read: `${Math.max(1, Math.ceil((post.content?.split(/\s+/).length || 0) / 200))} min read` })));
+      if (active && data?.length) setVisiblePosts(data.map((post: Record<string, any>) => ({ slug: post.slug, tag: post.tag, title: correctRubelliteSpelling(post.title), img: post.cover_url || '/images/Stone9-129.jpg', excerpt: correctRubelliteSpelling(post.excerpt || ''), date: post.published_at ? new Date(post.published_at).toLocaleDateString('en', { month: 'short', year: 'numeric' }) : '', read: `${Math.max(1, Math.ceil((post.content?.split(/\s+/).length || 0) / 200))} min read` })));
     });
     return () => { active = false; };
   }, []);
@@ -56,6 +58,7 @@ export default function BlogListPage() {
 
   return (
     <div ref={pageRef}>
+      <JsonLd data={breadcrumbJsonLd([{ name: 'Home', path: '/' }, { name: 'Blog', path: '/blog' }])} />
       <StickyNav />
 
       <div className="container">

@@ -1,6 +1,8 @@
 import GemCategoryPage from '@/components/GemCategoryPage';
+import JsonLd from '@/components/JsonLd';
+import { breadcrumbJsonLd, pageMetadata } from '@/lib/seo';
 
-export const metadata = { title: 'Tourmaline — Africa Gem Finds' };
+export const metadata = pageMetadata('Rough Tourmaline', 'Explore rough African tourmaline in green, pink, blue, black, and mixed-colour parcels available for direct inquiry.', '/gems/tourmaline');
 
 const specimens = [
   { id: 'TM-01', weight: '6.1 ct', origin: 'Africa', clarity: 'Eye clean', img: '/images/Stone4-068.jpg' },
@@ -9,7 +11,7 @@ const specimens = [
 
 export default function Page() {
   return (
-    <GemCategoryPage
+    <><JsonLd data={breadcrumbJsonLd([{ name: 'Home', path: '/' }, { name: 'Gem Categories', path: '/gems/aquamarine' }, { name: 'Tourmaline', path: '/gems/tourmaline' }])} /><GemCategoryPage
       name="Tourmaline"
       accent="green"
       accentVar="var(--green)"
@@ -20,6 +22,6 @@ export default function Page() {
       slug="tourmaline"
       heroImg="/images/Stone5-080.jpg"
       specimens={specimens}
-    />
+    /></>
   );
 }

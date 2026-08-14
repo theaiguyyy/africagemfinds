@@ -12,14 +12,14 @@ const heroStops = [
   { label: 'Indicolite Tourmaline', img: '/images/Stone11-149.jpg' },
   { label: 'Aquamarine', img: '/images/Stone10-137.jpg' },
   { label: 'Indicolite Tourmaline', img: '/images/Stone29-420.jpg' },
-  { label: 'Rubylite', img: '/images/Stone31-446.jpg' },
+  { label: 'Rubellite', img: '/images/Stone31-446.jpg' },
   { label: 'Tourmaline', img: '/images/Stone30-424.jpg' },
 ];
 
 const categories = [
   { name: 'Aquamarine', color: 'var(--blue)', href: '/gems/aquamarine', img: '/images/Stone2-040.jpg' },
   { name: 'Tourmaline', color: 'var(--green)', href: '/gems/tourmaline', img: '/images/Stone4-068.jpg' },
-  { name: 'Rubylite', color: 'var(--ruby)', href: '/gems/rubylite', img: '/images/Stone3-054.jpg' },
+  { name: 'Rubellite', color: 'var(--ruby)', href: '/gems/rubellite', img: '/images/Stone3-054.jpg' },
   { name: 'Morganite', color: 'var(--blush)', href: '/gems/morganite', img: '/images/Stone7-105.jpg' },
   { name: 'Spessartite Garnet', color: 'var(--amber)', href: '/gems/spessartite-garnet', empty: true },
   { name: 'Beryl', color: 'var(--teal)', href: '/gems/beryl', img: '/images/Stone13-175.jpg' },

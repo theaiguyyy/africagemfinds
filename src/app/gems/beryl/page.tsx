@@ -1,6 +1,8 @@
 import GemCategoryPage from '@/components/GemCategoryPage';
+import JsonLd from '@/components/JsonLd';
+import { breadcrumbJsonLd, pageMetadata } from '@/lib/seo';
 
-export const metadata = { title: 'Beryl — Africa Gem Finds' };
+export const metadata = pageMetadata('Rough Beryl', 'Explore rough African beryl, including green beryl, goshenite, and related varieties, with parcels available for direct inquiry.', '/gems/beryl');
 
 const specimens = [
   { id: 'BY-01', weight: '8.2 ct', origin: 'Africa', clarity: 'Eye clean', img: '/images/Stone10-139.jpg' },
@@ -10,7 +12,7 @@ const specimens = [
 
 export default function Page() {
   return (
-    <GemCategoryPage
+    <><JsonLd data={breadcrumbJsonLd([{ name: 'Home', path: '/' }, { name: 'Gem Categories', path: '/gems/aquamarine' }, { name: 'Beryl', path: '/gems/beryl' }])} /><GemCategoryPage
       name="Beryl"
       accent="teal"
       accentVar="var(--teal)"
@@ -21,6 +23,6 @@ export default function Page() {
       slug="beryl"
       heroImg="/images/Stone13-175.jpg"
       specimens={specimens}
-    />
+    /></>
   );
 }

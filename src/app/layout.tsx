@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Fraunces, Inter, Space_Mono } from 'next/font/google';
 import './globals.css';
+import { SITE_NAME, SITE_URL } from '@/lib/seo';
 
 const fraunces = Fraunces({
   subsets: ['latin'],
@@ -24,8 +25,22 @@ const spaceMono = Space_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Africa Gem Finds',
-  description: 'Rough gemstones sourced directly across Africa — aquamarine, tourmaline, rubylite, morganite, spessartite garnet, and beryl. Based in Bangkok.',
+  metadataBase: new URL(SITE_URL),
+  title: { default: SITE_NAME, template: `%s | ${SITE_NAME}` },
+  description: 'Explore rough aquamarine, tourmaline, rubellite, morganite, spessartite garnet, and beryl from Africa, personally inspected by Africa Gem Finds.',
+  openGraph: {
+    type: 'website',
+    locale: 'en_US',
+    siteName: SITE_NAME,
+    title: SITE_NAME,
+    description: 'Explore personally inspected rough gemstones from Africa.',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: SITE_NAME,
+    description: 'Explore personally inspected rough gemstones from Africa.',
+  },
+  robots: { index: true, follow: true, googleBot: { index: true, follow: true } },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

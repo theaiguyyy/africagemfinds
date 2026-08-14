@@ -8,6 +8,7 @@ import ReactMarkdown from 'react-markdown';
 import StickyNav from '@/components/StickyNav';
 import Footer from '@/components/Footer';
 import styles from './post.module.css';
+import { correctRubelliteSpelling } from '@/lib/seo';
 
 export default function BlogPostPage() {
   const params = useParams<{ slug: string }>();
@@ -22,7 +23,7 @@ export default function BlogPostPage() {
       if (!hasSupabaseConfig()) return;
       const { getSupabaseBrowserClient } = await import('@/lib/supabase/client');
       const { data } = await getSupabaseBrowserClient().from('blog_posts').select('title,tag,content,cover_url,published_at').eq('slug', params.slug).eq('published', true).maybeSingle();
-      if (active && data) setCmsPost(data);
+      if (active && data) setCmsPost({ ...data, title: correctRubelliteSpelling(data.title), content: correctRubelliteSpelling(data.content) });
     });
     return () => { active = false; };
   }, [params.slug]);

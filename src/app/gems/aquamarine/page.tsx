@@ -1,6 +1,8 @@
 import GemCategoryPage from '@/components/GemCategoryPage';
+import JsonLd from '@/components/JsonLd';
+import { breadcrumbJsonLd, pageMetadata } from '@/lib/seo';
 
-export const metadata = { title: 'Aquamarine — Africa Gem Finds' };
+export const metadata = pageMetadata('Rough Aquamarine', 'Explore rough aquamarine, the blue to blue-green variety of beryl, with available African gemstone parcels for direct inquiry.', '/gems/aquamarine');
 
 const specimens = [
   { id: 'AQ-01', weight: '4.8 ct', origin: 'Africa', clarity: 'Eye clean', img: '/images/Stone2-040.jpg' },
@@ -13,7 +15,7 @@ const specimens = [
 
 export default function Page() {
   return (
-    <GemCategoryPage
+    <><JsonLd data={breadcrumbJsonLd([{ name: 'Home', path: '/' }, { name: 'Gem Categories', path: '/gems/aquamarine' }, { name: 'Aquamarine', path: '/gems/aquamarine' }])} /><GemCategoryPage
       name="Aquamarine"
       accent="blue"
       accentVar="var(--blue)"
@@ -24,6 +26,6 @@ export default function Page() {
       slug="aquamarine"
       heroImg="/images/Stone2-040.jpg"
       specimens={specimens}
-    />
+    /></>
   );
 }

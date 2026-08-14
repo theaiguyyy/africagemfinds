@@ -36,7 +36,7 @@ interface Props {
 const gemCategories = [
   { name: 'Aquamarine', href: '/gems/aquamarine', color: 'var(--blue)' },
   { name: 'Tourmaline', href: '/gems/tourmaline', color: 'var(--green)' },
-  { name: 'Rubylite', href: '/gems/rubylite', color: 'var(--ruby)' },
+  { name: 'Rubellite', href: '/gems/rubellite', color: 'var(--ruby)' },
   { name: 'Morganite', href: '/gems/morganite', color: 'var(--blush)' },
   { name: 'Spessartite Garnet', href: '/gems/spessartite-garnet', color: 'var(--amber)' },
   { name: 'Beryl', href: '/gems/beryl', color: 'var(--teal)' },
@@ -57,9 +57,10 @@ export default function GemCategoryPage({
       if (!hasSupabaseConfig()) return;
       const { getSupabaseBrowserClient } = await import('@/lib/supabase/client');
       const supabase = getSupabaseBrowserClient();
-      const galleryFamily = name === 'Rubylite' ? 'Rubellite' : name;
+      const galleryFamily = name;
+      const mediaCategories = name === 'Rubellite' ? ['Rubellite', 'Rubylite'] : [name];
       const [{ data: cover }, { data: rows }] = await Promise.all([
-        supabase.from('media').select('url').eq('category', name).eq('featured', true).maybeSingle(),
+        supabase.from('media').select('url').in('category', mediaCategories).eq('featured', true).limit(1).maybeSingle(),
         supabase.from('listings').select('*').eq('gemstone_family', galleryFamily).eq('publish_state', 'published').eq('status', 'available').like('sku', 'AGF-GAL-%').order('position'),
       ]);
       if (!active) return;

@@ -105,6 +105,8 @@
   grid-template-columns: repeat(3, 1fr);
 }
 .card {
+  display: block;
+  color: inherit;
   border: 0;
   padding: 0;
   position: relative;

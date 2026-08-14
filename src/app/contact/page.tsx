@@ -104,7 +104,7 @@ export default function ContactPage() {
                     <option value="">Select a category...</option>
                     <option value="aquamarine">Aquamarine</option>
                     <option value="tourmaline">Tourmaline</option>
-                    <option value="rubylite">Rubylite</option>
+                    <option value="rubellite">Rubellite</option>
                     <option value="morganite">Morganite</option>
                     <option value="spessartite-garnet">Spessartite Garnet</option>
                     <option value="beryl">Beryl</option>

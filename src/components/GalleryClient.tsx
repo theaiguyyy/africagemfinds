@@ -47,7 +47,7 @@ export default function GalleryClient({ stones }: { stones: GalleryStone[] }) {
     openerRef.current = target;
     setSelected(stone);
     setImageIndex(0);
-    window.history.replaceState(null, "", `/gallery?stone=${encodeURIComponent(stone.id)}`);
+    window.history.replaceState(null, "", `/gallery/${stone.slug}`);
   };
   const close = () => {
     setSelected(null);
@@ -146,10 +146,12 @@ export default function GalleryClient({ stones }: { stones: GalleryStone[] }) {
           const primary =
             stone.images.find((i) => i.isPrimary) ?? stone.images[0];
           return (
-            <button
+            <Link
               key={stone.id}
+              href={`/gallery/${stone.slug}`}
+              prefetch={false}
               className={styles.card}
-              onClick={(e) => open(stone, e.currentTarget)}
+              onClick={(e) => { e.preventDefault(); open(stone, e.currentTarget); }}
             >
               <DeferredCardImage image={primary} />
               <i className={stone.status === "sold" ? styles.sold : ""}>
@@ -165,7 +167,7 @@ export default function GalleryClient({ stones }: { stones: GalleryStone[] }) {
                   {stone.publicWeight} · {stone.origin}
                 </span>
               </span>
-            </button>
+            </Link>
           );
         })}
       </section>
