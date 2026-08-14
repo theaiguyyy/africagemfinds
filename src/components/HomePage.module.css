@@ -660,3 +660,38 @@
   .heroContent { padding: 0 22px 80px; }
   .storyInner { padding: 0 22px 60px; }
 }
+
+@media (max-width: 600px) {
+  .hero { height:100svh; min-height:720px; }
+  .heroContent { padding:0 20px 88px; }
+  :global(.hero-eyebrow) { margin-bottom:18px; font-size:10px; }
+  .heroTitle { font-size:clamp(44px,13.2vw,56px); line-height:.98; }
+  .heroSub { margin-top:20px; max-width:340px; font-size:15px; line-height:1.65; }
+  .heroActions { margin-top:28px; }
+  .heroActionsInner { flex-direction:column; gap:10px; align-items:stretch; }
+  .heroActionsInner :global(.btn) { width:100%; justify-content:center; }
+  .heroDots { left:20px; right:20px; bottom:28px; max-width:calc(100vw - 40px); overflow:hidden; }
+  .heroScroll { display:none; }
+  .missionBleed { min-height:720px; }
+  .missionInner { padding:0 20px; }
+  .missionMark { font-size:58px; }
+  .missionVisionText { font-size:25px; line-height:1.42; }
+  .missionBody { font-size:14px; line-height:1.75; }
+  .catHead { padding:74px 20px 34px; flex-direction:column; align-items:flex-start; gap:16px; }
+  .catHead h2 { font-size:32px; }
+  .catGrid { display:flex; grid-template-columns:none; gap:12px; padding:0 20px 26px; overflow-x:auto; scroll-snap-type:x mandatory; scrollbar-width:none; }
+  .catGrid::-webkit-scrollbar { display:none; }
+  .catCard { flex:0 0 80vw; aspect-ratio:.9; scroll-snap-align:center; }
+  .arrow { opacity:1; transform:none; }
+  .trust { padding:76px 0; }
+  .trustVisual { min-height:430px; cursor:default; }
+  .trustHint, .trustLens { display:none; }
+  .trustCopy { padding:44px 20px; }
+  .trustCopy h2 { font-size:32px; }
+  .tradeTags { margin-top:32px; gap:10px; }
+  .tagCard, .tagCard:nth-child(1), .tagCard:nth-child(2), .tagCard:nth-child(3) { margin:0; max-width:none; transform:none; }
+  .storyBleed { min-height:720px; }
+  .storyInner { padding:0 20px 54px; }
+  .storyQuote { font-size:29px; line-height:1.35; }
+  .contactFormWrap { padding:48px 20px; }
+}

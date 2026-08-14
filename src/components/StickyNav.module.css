@@ -77,3 +77,16 @@
   .navLinks .navCta { margin-top:22px; padding:14px 20px; text-align:center; }
   .menuBackdrop { display:block; position:fixed; z-index:101; inset:0; border:0; background:rgba(8,10,9,.48); }
 }
+
+@media (max-width: 600px) {
+  .nav { padding: 12px 16px; }
+  .navLogo, .navLogo img { height: 52px; }
+  .navLogo img { max-width: 150px; }
+  .menuButton { width:48px; height:48px; padding:12px; border:1px solid var(--line); border-radius:50%; background:#fff; }
+  .navLinks { top:0; right:0; bottom:auto; left:auto; width:100vw; height:100dvh; padding:98px 24px max(28px, env(safe-area-inset-bottom)); background:linear-gradient(145deg,#fff 0%,#fafaf8 72%,#eaf3f7 100%); box-shadow:none; overflow-y:auto; }
+  .navLinks::before { content:"Explore"; display:block; margin:6px 0 18px; color:var(--blue); font-size:10px; font-weight:700; letter-spacing:.18em; text-transform:uppercase; }
+  .navLinks li { border-bottom-color:rgba(23,20,15,.1); }
+  .navLinks a { padding:15px 2px; font-family:var(--font-fraunces),Georgia,serif; font-size:23px; line-height:1.2; letter-spacing:-.01em; text-transform:none; color:var(--ink); }
+  .navLinks a.current { color:var(--blue); padding-left:14px; border-left:3px solid var(--blue); }
+  .navLinks .navCta { margin-top:22px; padding:16px 20px; border:0; font-family:Inter,sans-serif; font-size:13px !important; letter-spacing:.08em; text-transform:uppercase; }
+}

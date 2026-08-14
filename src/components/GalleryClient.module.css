@@ -335,6 +335,7 @@
   .heroCopy {
     bottom: 9%;
     right: 20px;
+    left: 20px;
   }
   .intro {
     padding: 75px 20px 42px;
@@ -355,6 +356,7 @@
   .grid {
     grid-template-columns: 1fr;
   }
+  .card { min-height:470px; }
   .backdrop {
     padding: 0;
   }
@@ -365,7 +367,7 @@
     padding: 10px;
   }
   .mainImage {
-    height: 48vh;
+    height: 43dvh;
   }
   .details {
     padding: 45px 22px 32px;

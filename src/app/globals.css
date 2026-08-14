@@ -115,3 +115,16 @@ footer { background: var(--ink); color: rgba(255, 255, 255, 0.75); padding: 80px
   .footer-grid { grid-template-columns: 1fr 1fr; }
   .container { padding: 0 22px; }
 }
+
+@media (max-width: 600px) {
+  body { font-size:15px; }
+  .container { padding:0 20px; }
+  .btn { min-height:52px; justify-content:center; }
+  footer { padding:58px 0 24px; }
+  .footer-grid { grid-template-columns:1fr; gap:0; padding-bottom:34px; }
+  .footer-grid > * { padding:22px 0; border-bottom:1px solid rgba(255,255,255,.1); }
+  .footer-grid > *:first-child { padding-top:0; }
+  .footer-col h4 { margin-bottom:12px; }
+  .footer-col a { margin-bottom:9px; font-size:14px; }
+  .footer-bottom { align-items:flex-start; flex-direction:column; gap:8px; }
+}
