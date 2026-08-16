@@ -1,0 +1,86 @@
+.page {
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  padding: clamp(16px, 4vw, 56px);
+  overflow: hidden;
+  position: relative;
+  background:
+    radial-gradient(circle at 14% 18%, rgba(46, 143, 134, .18), transparent 32%),
+    radial-gradient(circle at 90% 86%, rgba(168, 50, 75, .14), transparent 30%),
+    #edf1ef;
+}
+
+.glow { position: absolute; inset: 0; pointer-events: none; background-image: linear-gradient(rgba(14,57,56,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(14,57,56,.035) 1px, transparent 1px); background-size: 42px 42px; mask-image: linear-gradient(to bottom, black, transparent 75%); }
+
+.card {
+  width: min(1050px, 100%);
+  min-height: min(720px, calc(100svh - 64px));
+  display: grid;
+  grid-template-columns: minmax(0, .92fr) minmax(420px, 1.08fr);
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+  border: 1px solid rgba(14, 57, 56, .14);
+  background: #fff;
+  box-shadow: 0 30px 90px rgba(23, 20, 15, .18);
+}
+
+.portrait { min-height: 620px; position: relative; overflow: hidden; background: #dce4e2; }
+.portraitShade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(3,19,19,.06), transparent 45%, rgba(3,19,19,.72)); }
+.brandMark { position: absolute; top: 28px; left: 28px; width: 150px; height: 90px; padding: 9px; display: grid; place-items: center; background: rgba(255,255,255,.9); backdrop-filter: blur(10px); }
+.brandMark img { width: 100%; height: 100%; object-fit: contain; }
+.scanLabel { position: absolute; left: 30px; right: 30px; bottom: 28px; color: white; font-family: var(--font-space-mono), monospace; font-size: 11px; line-height: 1.5; text-transform: uppercase; letter-spacing: .14em; }
+
+.content { padding: clamp(42px, 7vw, 88px); display: flex; flex-direction: column; justify-content: center; }
+.eyebrow { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; color: var(--green); font-family: var(--font-space-mono), monospace; font-size: 11px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
+.eyebrow::before { content: ''; width: 22px; height: 1px; background: currentColor; }
+.content h1 { margin: 0; font-family: var(--font-fraunces), serif; font-size: clamp(48px, 6vw, 76px); font-weight: 400; line-height: .95; letter-spacing: -.035em; color: var(--ink); }
+.role { margin: 18px 0 0; color: var(--ruby); font-size: 13px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; }
+.intro { max-width: 460px; margin: 28px 0 34px; color: var(--ink-soft); font-size: 16px; line-height: 1.75; }
+
+.primaryActions { display: grid; grid-template-columns: minmax(212px, 1.12fr) minmax(190px, .88fr); gap: 12px; }
+.primaryActions a { min-height: 64px; display: flex; align-items: center; gap: 14px; padding: 13px 18px; text-decoration: none; transition: transform .2s ease, box-shadow .2s ease, background .2s ease; }
+.primaryActions a:hover { transform: translateY(-2px); }
+.primaryActions svg { width: 26px; height: 26px; flex: 0 0 auto; }
+.whatsapp { color: #fff; background: var(--green); box-shadow: 0 12px 28px rgba(20,120,96,.22); }
+.whatsapp svg { fill: currentColor; }
+.whatsapp span { display: grid; gap: 3px; white-space: nowrap; font-size: 14px; font-weight: 600; }
+.whatsapp small { font-size: 10px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; opacity: .78; }
+.save { border: 1px solid var(--ink); color: var(--ink); font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+.save svg { fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.save:hover { color: #fff; background: var(--ink); }
+
+.contactList { margin-top: 36px; border-top: 1px solid var(--line); }
+.contactList a { min-height: 54px; display: grid; grid-template-columns: 88px minmax(0, 1fr); align-items: center; gap: 16px; border-bottom: 1px solid var(--line); color: var(--ink); text-decoration: none; }
+.contactList span { color: var(--ink-soft); font-family: var(--font-space-mono), monospace; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; }
+.contactList strong { overflow-wrap: anywhere; font-size: 13px; font-weight: 500; }
+.contactList a:hover strong { color: var(--blue); }
+.footerLine { margin: 30px 0 0; color: #8a8379; font-family: var(--font-space-mono), monospace; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; }
+
+.primaryActions a:focus-visible, .contactList a:focus-visible, .brandMark:focus-visible { outline: 3px solid var(--amber); outline-offset: 3px; }
+
+@media (max-width: 760px) {
+  .page { display: block; padding: 0; background: #fff; }
+  .card { min-height: 100svh; display: block; border: 0; box-shadow: none; }
+  .portrait { min-height: 48svh; height: 410px; }
+  .brandMark { top: 18px; left: 18px; width: 124px; height: 76px; }
+  .scanLabel { left: 20px; bottom: 20px; }
+  .content { padding: 38px 22px 42px; }
+  .content h1 { font-size: clamp(46px, 14vw, 64px); }
+  .intro { margin: 22px 0 28px; font-size: 15px; }
+  .primaryActions { grid-template-columns: 1fr; }
+  .primaryActions a { min-height: 60px; }
+  .save { justify-content: center; }
+  .contactList { margin-top: 30px; }
+}
+
+@media (max-width: 350px) {
+  .portrait { height: 360px; }
+  .content { padding-inline: 18px; }
+  .contactList a { grid-template-columns: 72px minmax(0, 1fr); gap: 10px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .primaryActions a { transition: none; }
+}

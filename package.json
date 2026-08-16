@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "images:generate": "node scripts/generate-image-assets.mjs",
+    "founders:qr": "node scripts/generate-founder-qr.mjs",
     "gallery:manifest": "node scripts/import-gallery.mjs",
     "gallery:preview-assets": "node scripts/generate-gallery-preview-assets.mjs",
     "test": "node --experimental-strip-types --test tests/*.test.mjs",
@@ -24,6 +25,8 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "jsqr": "^1.4.0",
+    "qrcode": "^1.5.4",
     "sharp": "^0.34.4",
     "typescript": "^5"
   }
