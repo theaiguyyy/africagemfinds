@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import styles from './admin.module.css';
 import extra from './adminExtras.module.css';
 
@@ -96,7 +97,12 @@ export default function AdminPage() {
   const [saveNotice, setSaveNotice] = useState<{ type: 'saving' | 'saved' | 'error'; message: string } | null>(null);
   const [uploadingPostImage, setUploadingPostImage] = useState(false);
   const [uploadingListingImages, setUploadingListingImages] = useState(false);
+  const [loadingData, setLoadingData] = useState(true);
+  const [dataError, setDataError] = useState<string | null>(null);
+  const [draggedItem, setDraggedItem] = useState<{ table: 'media' | 'listings' | 'blog_posts'; id: string } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const listingEditorRef = useRef<HTMLFormElement>(null);
+  const blogEditorRef = useRef<HTMLFormElement>(null);
 
   // Auth guard
   useEffect(() => {
@@ -106,9 +112,10 @@ export default function AdminPage() {
         if (!hasSupabaseConfig()) { setChecking(false); router.replace('/admin/login'); return; }
         const { getSupabaseBrowserClient } = await import('@/lib/supabase/client');
         const supabase = getSupabaseBrowserClient();
-        const { data } = await supabase.auth.getUser();
-        const userRole = data.user?.app_metadata?.role as 'owner' | 'staff' | undefined;
-        if (!data.user || !userRole || !['owner', 'staff'].includes(userRole)) {
+        const { data, error } = await supabase.auth.getClaims();
+        const claims = data?.claims as { app_metadata?: { role?: string } } | undefined;
+        const userRole = claims?.app_metadata?.role as 'owner' | 'staff' | undefined;
+        if (error || !claims || !userRole || !['owner', 'staff'].includes(userRole)) {
           await supabase.auth.signOut();
           router.replace('/admin/login');
           return;
@@ -123,10 +130,12 @@ export default function AdminPage() {
     check();
   }, [router]);
 
-  // Keep every CMS surface hydrated so switching views is instant.
+  // Load records in parallel; image bytes are deferred until their view is opened.
   useEffect(() => {
     if (!authed) return;
     const load = async () => {
+      setLoadingData(true);
+      setDataError(null);
       const { getSupabaseBrowserClient } = await import('@/lib/supabase/client');
       const supabase = getSupabaseBrowserClient();
       const [inquiryResult, listingResult, mediaResult, blogResult, listingImageResult] = await Promise.all([
@@ -136,11 +145,18 @@ export default function AdminPage() {
         supabase.from('blog_posts').select('*').order('position'),
         supabase.from('listing_images').select('*').order('sort_order'),
       ]);
+      const failure = [inquiryResult, listingResult, mediaResult, blogResult, listingImageResult].find(result => result.error);
+      if (failure?.error) {
+        setDataError(failure.error.message);
+        setLoadingData(false);
+        return;
+      }
       setInquiries((inquiryResult.data ?? []) as Inquiry[]);
-      setListings((listingResult.data ?? []) as Listing[]);
-      setMedia((mediaResult.data ?? []) as MediaItem[]);
+      setListings(((listingResult.data ?? []) as Listing[]).map(item => item.category === 'Rubylite' ? { ...item, category: 'Rubellite' } : item));
+      setMedia(((mediaResult.data ?? []) as MediaItem[]).map(item => item.category === 'Rubylite' ? { ...item, category: 'Rubellite' } : item));
       setBlogPosts((blogResult.data ?? []) as BlogPost[]);
       setListingImages((listingImageResult.data ?? []) as ListingImage[]);
+      setLoadingData(false);
     };
     load();
   }, [authed]);
@@ -172,30 +188,57 @@ export default function AdminPage() {
     try {
       const { getSupabaseBrowserClient } = await import('@/lib/supabase/client');
       const supabase = getSupabaseBrowserClient();
-      for (const file of files) {
+      for (const [offset, file] of files.entries()) {
         const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '-');
         const path = `gems/${mediaFilter === 'All' ? 'Unassigned' : mediaFilter}/${Date.now()}-${safeName}`;
         const { error: uploadError } = await supabase.storage.from('gem-photos').upload(path, file);
         if (uploadError) throw uploadError;
         const { data: publicUrl } = supabase.storage.from('gem-photos').getPublicUrl(path);
-        const item = { name: file.name, url: publicUrl.publicUrl, storage_path: path, category: mediaFilter === 'All' ? 'Unassigned' : mediaFilter, weight: '', featured: false, position: media.length };
+        const item = { name: file.name, url: publicUrl.publicUrl, storage_path: path, category: mediaFilter === 'All' ? 'Unassigned' : mediaFilter, weight: '', featured: false, position: media.length + offset };
         const { data, error } = await supabase.from('media').insert(item).select().single();
         if (error) throw error;
         setMedia(current => [...current, data as MediaItem]);
       }
+      notify('saved', `${files.length} photo${files.length === 1 ? '' : 's'} uploaded successfully.`);
     } catch (err) {
-      console.error('Upload failed', err);
+      notify('error', err instanceof Error ? err.message : 'Upload failed.');
     } finally {
       setUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = '';
     }
   };
 
-  const categories = ['Aquamarine', 'Tourmaline', 'Rubylite', 'Morganite', 'Spessartite Garnet', 'Beryl'];
+  const categories = ['Aquamarine', 'Tourmaline', 'Rubellite', 'Morganite', 'Spessartite Garnet', 'Beryl'];
 
   function notify(type: 'saving' | 'saved' | 'error', message: string) {
     setSaveNotice({ type, message });
     if (type !== 'saving') window.setTimeout(() => setSaveNotice(null), 3200);
+  }
+
+  function openListingEditor(listing: Partial<Listing>) {
+    setEditingListing(listing);
+    window.requestAnimationFrame(() => listingEditorRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+  }
+
+  function openBlogEditor(post: Partial<BlogPost>) {
+    setEditingPost(post);
+    window.requestAnimationFrame(() => blogEditorRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+  }
+
+  async function persistAdminOrder(
+    resource: 'media' | 'listings' | 'blog_posts' | 'listing_images',
+    ordered: { id: string; position?: number; sort_order?: number }[],
+  ): Promise<string | null> {
+    const { getSupabaseBrowserClient } = await import('@/lib/supabase/client');
+    const supabase = getSupabaseBrowserClient();
+    const rpc = await supabase.rpc('reorder_admin_items', { resource_name: resource, ordered_ids: ordered.map(item => item.id) });
+    if (!rpc.error) return null;
+
+    // Safe compatibility path until the atomic reorder migration reaches the project.
+    if (rpc.error.code !== 'PGRST202' && rpc.error.code !== '42883') return rpc.error.message;
+    const field = resource === 'listing_images' ? 'sort_order' : 'position';
+    const results = await Promise.all(ordered.map(item => supabase.from(resource).update({ [field]: item[field] }).eq('id', item.id)));
+    return results.find(result => result.error)?.error?.message ?? null;
   }
 
   async function featureMedia(item: MediaItem) {
@@ -316,10 +359,9 @@ export default function AdminPage() {
     if (index < 0 || target < 0 || target >= images.length) return;
     [images[index], images[target]] = [images[target], images[index]];
     const positioned = images.map((image, sort_order) => ({ ...image, sort_order }));
-    const { getSupabaseBrowserClient } = await import('@/lib/supabase/client');
-    const supabase = getSupabaseBrowserClient(); notify('saving', 'Saving image order…');
-    const results = await Promise.all(positioned.map(image => supabase.from('listing_images').update({ sort_order: image.sort_order }).eq('id', image.id)));
-    const failed = results.find(result => result.error); if (failed?.error) { notify('error', failed.error.message); return; }
+    notify('saving', 'Saving image order…');
+    const error = await persistAdminOrder('listing_images', positioned);
+    if (error) { notify('error', error); return; }
     setListingImages(current => [...current.filter(image => image.listing_id !== listingId), ...positioned]);
     notify('saved', 'Gallery image order saved.');
   }
@@ -342,7 +384,7 @@ export default function AdminPage() {
     const supabase = getSupabaseBrowserClient();
     const result = editingPost?.id
       ? await supabase.from('blog_posts').update(payload).eq('id', editingPost.id).select().single()
-      : await supabase.from('blog_posts').insert(payload).select().single();
+      : await supabase.from('blog_posts').insert({ ...payload, position: blogPosts.length }).select().single();
     if (result.error) { notify('error', result.error.message); return; }
     setBlogPosts(current => editingPost?.id ? current.map(item => item.id === result.data.id ? result.data as BlogPost : item) : [result.data as BlogPost, ...current]);
     setEditingPost(null);
@@ -357,16 +399,39 @@ export default function AdminPage() {
     const reordered = [...current];
     [reordered[index], reordered[target]] = [reordered[target], reordered[index]];
     const positioned = reordered.map((item, position) => ({ ...item, position }));
-    const { getSupabaseBrowserClient } = await import('@/lib/supabase/client');
-    const supabase = getSupabaseBrowserClient();
     notify('saving', 'Saving new order…');
-    const results = await Promise.all(positioned.map(item => supabase.from(table).update({ position: item.position }).eq('id', item.id)));
-    const failed = results.find(result => result.error);
-    if (failed?.error) { notify('error', failed.error.message); return; }
+    const error = await persistAdminOrder(table, positioned);
+    if (error) { notify('error', error); return; }
     if (table === 'media') setMedia(positioned as MediaItem[]);
     else if (table === 'listings') setListings(positioned as Listing[]);
     else setBlogPosts(positioned as BlogPost[]);
     notify('saved', 'Display order saved.');
+  }
+
+  async function dropItem(table: 'media' | 'listings' | 'blog_posts', targetId: string) {
+    if (!draggedItem || draggedItem.table !== table || draggedItem.id === targetId) return;
+    const current = table === 'media' ? media : table === 'listings' ? listings : blogPosts;
+    const sourceIndex = current.findIndex(item => item.id === draggedItem.id);
+    const targetIndex = current.findIndex(item => item.id === targetId);
+    if (sourceIndex < 0 || targetIndex < 0) return;
+    const reordered = [...current];
+    const [moved] = reordered.splice(sourceIndex, 1);
+    reordered.splice(targetIndex, 0, moved);
+    const positioned = reordered.map((item, position) => ({ ...item, position }));
+    setDraggedItem(null);
+    if (table === 'media') setMedia(positioned as MediaItem[]);
+    else if (table === 'listings') setListings(positioned as Listing[]);
+    else setBlogPosts(positioned as BlogPost[]);
+    notify('saving', 'Saving dragged order…');
+    const error = await persistAdminOrder(table, positioned);
+    if (error) {
+      if (table === 'media') setMedia(current as MediaItem[]);
+      else if (table === 'listings') setListings(current as Listing[]);
+      else setBlogPosts(current as BlogPost[]);
+      notify('error', error);
+      return;
+    }
+    notify('saved', 'Dragged order saved and synced to the website.');
   }
 
   async function uploadBlogCover(file: File) {
@@ -469,6 +534,7 @@ export default function AdminPage() {
 
       {/* MAIN */}
       <main className={styles.main}>
+        {dataError && <div className={extra.dataError} role="alert">CMS data could not load: {dataError}</div>}
         {/* OVERVIEW */}
         {view === 'overview' && (
           <div className={styles.panel}>
@@ -513,9 +579,9 @@ export default function AdminPage() {
           <div className={styles.panel}>
             <div className={styles.panelHeader}>
               <div><h1 className={styles.panelTitle}>Listings</h1><p>Manage and reorder the specimens visible on the website</p></div>
-              <button className="btn btn-primary" onClick={() => setEditingListing({ status: 'available', publish_state: 'draft' })}>Add Gallery Stone</button>
+              <button className="btn btn-primary" onClick={() => openListingEditor({ status: 'available', publish_state: 'draft' })}>Add Gallery Stone</button>
             </div>
-            {editingListing && <form className={styles.editor} onSubmit={saveListing}>
+            {editingListing && <form key={editingListing.id ?? 'new-listing'} ref={listingEditorRef} className={`${styles.editor} ${extra.editorAnchor}`} onSubmit={saveListing}>
               <input name="title" placeholder="Listing title" defaultValue={editingListing.title} required />
               <input name="slug" placeholder="listing-slug" defaultValue={editingListing.slug} required />
               <input name="sku" placeholder="AGF-GAL-001" defaultValue={editingListing.sku} />
@@ -531,7 +597,7 @@ export default function AdminPage() {
               <input name="photo_url" placeholder="Photo URL" defaultValue={editingListing.photo_url} />
               <select name="status" defaultValue={editingListing.status === 'sold' ? 'sold' : 'available'}><option>available</option><option>sold</option></select>
               <select name="publish_state" defaultValue={editingListing.publish_state ?? 'draft'}><option>draft</option><option>published</option></select>
-              <button className="btn btn-primary" type="submit">Save Listing Details</button>
+              <button className="btn btn-primary" type="submit" disabled={saveNotice?.type === 'saving'}>{saveNotice?.type === 'saving' ? 'Saving…' : 'Save Listing Details'}</button>
               <button className={styles.copyBtn} type="button" onClick={() => setEditingListing(null)}>Cancel</button>
               {editingListing.id && <section className={extra.galleryImageManager}>
                 <div className={extra.galleryImageHead}>
@@ -539,7 +605,7 @@ export default function AdminPage() {
                   <label className={extra.galleryUploadButton}>{uploadingListingImages ? 'Uploading…' : 'Upload images'}<input type="file" accept="image/jpeg,image/png,image/webp,image/avif" multiple disabled={uploadingListingImages} onChange={event => { const listing = editingListing as Listing; void uploadListingImages(listing, Array.from(event.target.files ?? [])); event.target.value = ''; }} /></label>
                 </div>
                 <div className={extra.galleryImageGrid}>{listingImages.filter(image => image.listing_id === editingListing.id).sort((a,b) => a.sort_order - b.sort_order).map((image, index) => <article key={image.id} className={extra.galleryImageCard}>
-                  <div className={extra.galleryImagePreview}><img src={image.url} alt={image.alt_text} /><span>{image.is_primary ? 'Primary' : `View ${index + 1}`}</span></div>
+                  <div className={extra.galleryImagePreview}><Image src={image.url} alt={image.alt_text} fill sizes="(max-width: 700px) 80vw, 220px" quality={90} /><span>{image.is_primary ? 'Primary' : `View ${index + 1}`}</span></div>
                   <input aria-label={`Alt text for view ${index + 1}`} defaultValue={image.alt_text} onBlur={event => event.target.value !== image.alt_text && updateListingImageAlt(image, event.target.value)} />
                   <div><button type="button" onClick={() => moveListingImage(editingListing.id!, image.id, -1)} disabled={index === 0}>←</button><button type="button" onClick={() => moveListingImage(editingListing.id!, image.id, 1)} disabled={index === listingImages.filter(item => item.listing_id === editingListing.id).length - 1}>→</button><button type="button" className={image.is_primary ? extra.primarySelected : ''} onClick={() => setPrimaryListingImage(editingListing as Listing, image)}>★ Primary</button></div>
                 </article>)}</div>
@@ -557,18 +623,19 @@ export default function AdminPage() {
               </thead>
               <tbody>
                 {listings.map(l => (
-                  <tr key={l.id}>
-                    <td className={styles.orderCell}>↕ {l.position + 1}</td>
-                    <td><div className={styles.specimenCell}>{l.photo_url && <img src={l.photo_url} alt="" />}<div><strong>{l.title}</strong><small>{l.slug}</small></div></div></td>
+                  <tr key={l.id} draggable onDragStart={() => setDraggedItem({ table: 'listings', id: l.id })} onDragEnd={() => setDraggedItem(null)} onDragOver={event => event.preventDefault()} onDrop={() => void dropItem('listings', l.id)} className={draggedItem?.id === l.id ? extra.dragging : ''}>
+                    <td className={`${styles.orderCell} ${extra.dragHandle}`} title="Drag to reorder">⠿ {l.position + 1}</td>
+                    <td><div className={styles.specimenCell}>{l.photo_url && <Image src={l.photo_url} alt="" width={44} height={44} sizes="44px" quality={90} />}<div><strong>{l.title}</strong><small>{l.slug}</small></div></div></td>
                     <td>{l.category}</td>
                     <td><span className={`${styles.badge} ${styles[l.status]}`}>{l.status}</span>{l.status === 'sold' && <small className={extra.soldHelp}>Visitors can ask for a similar stone.</small>}</td>
                     <td>{l.weight || '—'}</td>
-                    <td><div className={styles.rowActions}><button onClick={() => moveItem('listings', l.id, -1)} title="Move earlier">↑</button><button onClick={() => moveItem('listings', l.id, 1)} title="Move later">↓</button><button onClick={() => toggleListingStatus(l)}>{l.status === 'sold' ? 'Mark available' : 'Mark sold'}</button><button onClick={() => setEditingListing(l)}>Edit &amp; Images</button>{role === 'owner' && <button className={styles.danger} onClick={async () => { const { getSupabaseBrowserClient } = await import('@/lib/supabase/client'); await getSupabaseBrowserClient().from('listings').delete().eq('id', l.id); setListings(v => v.filter(x => x.id !== l.id)); }}>Delete</button>}</div></td>
+                    <td><div className={styles.rowActions}><button onClick={() => moveItem('listings', l.id, -1)} title="Move earlier">↑</button><button onClick={() => moveItem('listings', l.id, 1)} title="Move later">↓</button><button onClick={() => toggleListingStatus(l)}>{l.status === 'sold' ? 'Mark available' : 'Mark sold'}</button><button onClick={() => openListingEditor(l)}>Edit &amp; Images</button>{role === 'owner' && <button className={styles.danger} onClick={async () => { const { getSupabaseBrowserClient } = await import('@/lib/supabase/client'); await getSupabaseBrowserClient().from('listings').delete().eq('id', l.id); setListings(v => v.filter(x => x.id !== l.id)); }}>Delete</button>}</div></td>
                   </tr>
                 ))}
               </tbody>
             </table>
-            {listings.length === 0 && <p className={styles.empty}>No listings yet. Create the first specimen above.</p>}
+            {loadingData && <p className={styles.empty}>Loading listings…</p>}
+            {!loadingData && listings.length === 0 && <p className={styles.empty}>No listings yet. Create the first specimen above.</p>}
           </div>
         )}
 
@@ -586,12 +653,11 @@ export default function AdminPage() {
             <div className={styles.filters}>{['All', ...categories].map(cat => <button key={cat} className={`${styles.copyBtn} ${mediaFilter === cat ? styles.active : ''}`} onClick={() => setMediaFilter(cat)}>{cat}</button>)}</div>
             <div className={styles.mediaGrid}>
               {media.filter(m => mediaFilter === 'All' || m.category === mediaFilter).map(m => (
-                <div key={m.id} className={`${styles.mediaItem} ${extra.editableMedia}`}>
+                <div key={m.id} draggable onDragStart={() => setDraggedItem({ table: 'media', id: m.id })} onDragEnd={() => setDraggedItem(null)} onDragOver={event => event.preventDefault()} onDrop={() => void dropItem('media', m.id)} className={`${styles.mediaItem} ${extra.editableMedia} ${draggedItem?.id === m.id ? extra.dragging : ''}`}>
                   <span className={styles.mediaPosition}>{m.position + 1}</span>
                   <button className={`${styles.mediaStar} ${m.featured ? styles.featured : ''}`} onClick={() => featureMedia(m)} title="Set category cover">★</button>
                   <div className={`${styles.mediaThumb} admin-media-thumb`}>
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={m.url} alt={m.name} />
+                    <Image src={m.url} alt={m.name} fill sizes="(max-width: 700px) 45vw, 220px" quality={90} />
                   </div>
                   <form className={extra.mediaEditor} onSubmit={event => saveMediaStone(event, m)}>
                     <input name="name" defaultValue={m.name} placeholder="Stone name" aria-label="Stone name" required />
@@ -615,7 +681,7 @@ export default function AdminPage() {
             <div className={styles.mediaGrid}>{categories.map(category => {
               const cover = media.find(item => item.category === category && item.featured);
               return <div className={extra.categoryCard} key={category}>
-                <div className={`${styles.mediaThumb} category-thumb`}>{cover ? <img src={cover.url} alt="" /> : <span className={styles.empty}>No cover</span>}</div>
+                <div className={`${styles.mediaThumb} category-thumb`}>{cover ? <Image src={cover.url} alt={`${category} category cover`} fill sizes="220px" quality={90} /> : <span className={styles.empty}>No cover</span>}</div>
                 <strong>{category}</strong><div>{listings.filter(item => item.category === category).length} listings</div>
                 <button className="btn btn-primary" onClick={() => { setMediaFilter(category); setView('media'); }}>Change cover</button>
               </div>;
@@ -629,15 +695,15 @@ export default function AdminPage() {
           <div className={styles.panel}>
             <div className={styles.panelHeader}>
               <div><h1 className={styles.panelTitle}>Blog Posts</h1><p>Edit current articles, drafts, covers, and publishing status</p></div>
-              <button className="btn btn-primary" onClick={() => setEditingPost({ published: false })}>New Post</button>
+              <button className="btn btn-primary" onClick={() => openBlogEditor({ published: false })}>New Post</button>
             </div>
-            {editingPost && <form className={styles.editor} onSubmit={savePost}>
+            {editingPost && <form key={editingPost.id ?? 'new-post'} ref={blogEditorRef} className={`${styles.editor} ${extra.editorAnchor}`} onSubmit={savePost}>
               <input name="title" placeholder="Post title" defaultValue={editingPost.title} required />
               <input name="slug" placeholder="post-slug" defaultValue={editingPost.slug} required />
               <input name="tag" placeholder="Field Notes" defaultValue={editingPost.tag} />
               <div className={extra.coverPicker}>
                 <label>Cover image</label>
-                {editingPost.cover_url && <img src={editingPost.cover_url} alt="Current post cover" />}
+                {editingPost.cover_url && <Image src={editingPost.cover_url} alt="Current post cover" width={140} height={90} sizes="140px" quality={90} />}
                 <input type="file" accept="image/*" onChange={e => e.target.files?.[0] && uploadBlogCover(e.target.files[0])} />
                 <input name="cover_url" placeholder="Or paste an image URL" value={editingPost.cover_url ?? ''} onChange={e => setEditingPost(current => ({ ...current, cover_url: e.target.value }))} />
                 <small>{uploadingPostImage ? 'Uploading…' : 'Upload a clean image or paste its URL.'}</small>
@@ -645,7 +711,7 @@ export default function AdminPage() {
               <textarea name="excerpt" placeholder="Excerpt" defaultValue={editingPost.excerpt} />
               <textarea name="content" placeholder="Post content" defaultValue={editingPost.content} rows={10} required />
               <label><input name="published" type="checkbox" defaultChecked={editingPost.published} /> Published</label>
-              <button className="btn btn-primary" type="submit">Save Post</button><button type="button" className={styles.copyBtn} onClick={() => setEditingPost(null)}>Cancel</button>
+              <button className="btn btn-primary" type="submit" disabled={saveNotice?.type === 'saving'}>{saveNotice?.type === 'saving' ? 'Saving…' : 'Save Post'}</button><button type="button" className={styles.copyBtn} onClick={() => setEditingPost(null)}>Cancel</button>
             </form>}
             <table className={styles.table}>
               <thead>
@@ -659,12 +725,12 @@ export default function AdminPage() {
               </thead>
               <tbody>
                 {blogPosts.map(p => (
-                  <tr key={p.id}>
+                  <tr key={p.id} draggable onDragStart={() => setDraggedItem({ table: 'blog_posts', id: p.id })} onDragEnd={() => setDraggedItem(null)} onDragOver={event => event.preventDefault()} onDrop={() => void dropItem('blog_posts', p.id)} className={draggedItem?.id === p.id ? extra.dragging : ''}>
                     <td>{p.title}</td>
                     <td><code className={styles.slug}>{p.slug}</code></td>
                     <td>{p.tag}</td>
                     <td><span className={`${styles.badge} ${p.published ? styles.available : styles.reserved}`}>{p.published ? 'Published' : 'Draft'}</span></td>
-                    <td><div className={styles.rowActions}><button onClick={() => moveItem('blog_posts', p.id, -1)} title="Move earlier">↑</button><button onClick={() => moveItem('blog_posts', p.id, 1)} title="Move later">↓</button><button onClick={() => setEditingPost(p)}>Edit</button>{role === 'owner' && <button className={styles.danger} onClick={async () => { const { getSupabaseBrowserClient } = await import('@/lib/supabase/client'); await getSupabaseBrowserClient().from('blog_posts').delete().eq('id', p.id); setBlogPosts(v => v.filter(x => x.id !== p.id)); }}>Delete</button>}</div></td>
+                    <td><div className={styles.rowActions}><button onClick={() => moveItem('blog_posts', p.id, -1)} title="Move earlier">↑</button><button onClick={() => moveItem('blog_posts', p.id, 1)} title="Move later">↓</button><button onClick={() => openBlogEditor(p)}>Edit</button>{role === 'owner' && <button className={styles.danger} onClick={async () => { const { getSupabaseBrowserClient } = await import('@/lib/supabase/client'); await getSupabaseBrowserClient().from('blog_posts').delete().eq('id', p.id); setBlogPosts(v => v.filter(x => x.id !== p.id)); }}>Delete</button>}</div></td>
                   </tr>
                 ))}
               </tbody>
