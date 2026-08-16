@@ -58,7 +58,7 @@ export default async function GalleryStonePage({ params }: { params: Promise<{ s
               <div><dt>Gemstone</dt><dd>{stone.family}</dd></div>
               <div><dt>Origin</dt><dd>{stone.origin}</dd></div>
               <div><dt>Weight</dt><dd>{stone.publicWeight}</dd></div>
-              <div><dt>Availability</dt><dd>{stone.status === 'sold' ? 'Sold' : 'Available'}</dd></div>
+              <div><dt>Availability</dt><dd className={stone.status === 'sold' ? styles.statusSold : styles.statusAvailable}>{stone.status === 'sold' ? 'Sold' : 'Available'}</dd></div>
             </dl>
             {stone.description && <p>{stone.description}</p>}
             <aside><strong>Gemstone note</strong><p>{educationalFact(stone)}</p></aside>

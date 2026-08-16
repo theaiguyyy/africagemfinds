@@ -6,6 +6,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { GalleryImage, GalleryStone } from "@/lib/gallery/types";
 import { gallerySizes, storageVariant } from "@/lib/gallery/images";
 import { educationalFact, inquiryMessage, statusContent } from "@/lib/gallery/content";
+import { getRelatedAvailableStones } from "@/lib/gallery/recommendations";
 import styles from "./GalleryClient.module.css";
 
 export default function GalleryClient({ stones }: { stones: GalleryStone[] }) {
@@ -17,6 +18,7 @@ export default function GalleryClient({ stones }: { stones: GalleryStone[] }) {
   const [imageIndex, setImageIndex] = useState(0);
   const [inquire, setInquire] = useState(false);
   const closeRef = useRef<HTMLButtonElement>(null);
+  const modalRef = useRef<HTMLElement>(null);
   const openerRef = useRef<HTMLElement | null>(null);
   const families = ["All", ...new Set(stones.map((s) => s.family))];
   const origins = ["All", ...new Set(stones.map((s) => s.origin))];
@@ -43,6 +45,10 @@ export default function GalleryClient({ stones }: { stones: GalleryStone[] }) {
       ),
     [stones, search, family, origin, status],
   );
+  const related = useMemo(
+    () => selected ? getRelatedAvailableStones(stones, selected) : [],
+    [stones, selected],
+  );
   const open = (stone: GalleryStone, target: HTMLElement) => {
     openerRef.current = target;
     setSelected(stone);
@@ -55,6 +61,16 @@ export default function GalleryClient({ stones }: { stones: GalleryStone[] }) {
     window.history.replaceState(null, "", "/gallery");
     requestAnimationFrame(() => openerRef.current?.focus());
   };
+  const openRelated = (stone: GalleryStone) => {
+    setSelected(stone);
+    setImageIndex(0);
+    setInquire(false);
+    window.history.replaceState(null, "", `/gallery/${stone.slug}`);
+    requestAnimationFrame(() => {
+      modalRef.current?.scrollTo({ top: 0, behavior: "smooth" });
+      closeRef.current?.focus();
+    });
+  };
   useEffect(() => {
     if (!selected) return;
     document.body.style.overflow = "hidden";
@@ -66,7 +82,7 @@ export default function GalleryClient({ stones }: { stones: GalleryStone[] }) {
       if (event.key === "ArrowLeft") setImageIndex((i) => Math.max(i - 1, 0));
       if (event.key === "Tab") {
         const nodes = document.querySelectorAll<HTMLElement>(
-          "[data-gallery-dialog] button,[data-gallery-dialog] input,[data-gallery-dialog] textarea",
+          "[data-gallery-dialog] a,[data-gallery-dialog] button,[data-gallery-dialog] input,[data-gallery-dialog] textarea",
         );
         const first = nodes[0],
           last = nodes[nodes.length - 1];
@@ -177,6 +193,7 @@ export default function GalleryClient({ stones }: { stones: GalleryStone[] }) {
           onMouseDown={(e) => e.target === e.currentTarget && close()}
         >
           <section
+            ref={modalRef}
             data-gallery-dialog
             className={styles.modal}
             role="dialog"
@@ -241,7 +258,7 @@ export default function GalleryClient({ stones }: { stones: GalleryStone[] }) {
                 <div><dt>Material</dt><dd>{selected.family}</dd></div>
                 <div>
                   <dt>Status</dt>
-                  <dd>{selected.status}</dd>
+                  <dd className={selected.status === "sold" ? styles.statusSold : styles.statusAvailable}>{selected.status}</dd>
                 </div>
               </dl>
               {selected.description && <p>{selected.description}</p>}
@@ -252,6 +269,45 @@ export default function GalleryClient({ stones }: { stones: GalleryStone[] }) {
               </button>
               {inquire && <InquiryForm stone={selected} />}
             </div>
+            {related.length > 0 && (
+              <section className={styles.related} aria-labelledby="related-stones-title">
+                <div className={styles.relatedHead}>
+                  <span>Continue exploring</span>
+                  <h3 id="related-stones-title">More stones from the gallery</h3>
+                </div>
+                <div className={styles.relatedGrid}>
+                  {related.map((stone) => {
+                    const primary = stone.images.find((image) => image.isPrimary) ?? stone.images[0];
+                    return (
+                      <Link
+                        key={stone.id}
+                        href={`/gallery/${stone.slug}`}
+                        prefetch={false}
+                        className={styles.relatedCard}
+                        onClick={(event) => { event.preventDefault(); openRelated(stone); }}
+                      >
+                        <span className={styles.relatedImage}>
+                          <Image
+                            src={storageVariant(primary.url, 640)}
+                            alt={primary.alt}
+                            fill
+                            sizes="(max-width: 700px) 46vw, (max-width: 980px) 40vw, 260px"
+                            quality={95}
+                            loading="lazy"
+                          />
+                        </span>
+                        <span className={styles.relatedCopy}>
+                          <small>{stone.family} · {stone.sku}</small>
+                          <strong>{stone.title}</strong>
+                          <span>{stone.publicWeight} · {stone.origin}</span>
+                        </span>
+                        <i>Available</i>
+                      </Link>
+                    );
+                  })}
+                </div>
+              </section>
+            )}
           </section>
         </div>
       )}

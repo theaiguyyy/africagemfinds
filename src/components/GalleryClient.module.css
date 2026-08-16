@@ -132,15 +132,15 @@
   z-index: 3;
   top: 18px;
   left: 18px;
-  background: #fff;
-  color: #244438;
+  background: var(--green);
+  color: #fff;
   padding: 8px 11px;
   font: normal 600 9px/1 var(--font-inter);
   text-transform: uppercase;
   letter-spacing: 0.12em;
 }
 .card > i.sold {
-  background: #17140f;
+  background: var(--ruby);
   color: #fff;
 }
 .scrim {
@@ -265,6 +265,18 @@
 .details dd {
   margin: 6px 0 0;
 }
+.details dd.statusAvailable,
+.details dd.statusSold {
+  display: inline-block;
+  padding: 5px 9px;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.details dd.statusAvailable { background: var(--green); }
+.details dd.statusSold { background: var(--ruby); }
 .details p {
   line-height: 1.7;
   color: var(--ink-soft);
@@ -316,7 +328,81 @@
   line-height: 1.5;
   color: var(--ink-soft);
 }
+.related {
+  grid-column: 1 / -1;
+  padding: 42px 24px 28px;
+  border-top: 1px solid var(--line);
+  background: #fff;
+}
+.relatedHead {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 22px;
+}
+.relatedHead > span {
+  color: var(--green);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+.relatedHead h3 {
+  margin: 0;
+  font: 400 clamp(28px, 3vw, 42px)/1.05 var(--font-fraunces);
+}
+.relatedGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+.relatedCard {
+  position: relative;
+  min-width: 0;
+  color: var(--ink);
+  border: 1px solid var(--line);
+  background: #fff;
+  transition: transform .25s ease, box-shadow .25s ease;
+}
+.relatedCard:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px rgba(23, 20, 15, .1);
+}
+.relatedImage {
+  display: block;
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: var(--bg-alt);
+}
+.relatedImage img { object-fit: cover; }
+.relatedCopy { display: block; padding: 14px; }
+.relatedCopy small,
+.relatedCopy span {
+  display: block;
+  color: var(--ink-soft);
+  font-size: 9px;
+}
+.relatedCopy small { text-transform: uppercase; letter-spacing: .08em; }
+.relatedCopy strong {
+  display: block;
+  margin: 7px 0;
+  font: 400 19px/1.15 var(--font-fraunces);
+}
+.relatedCard > i {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  padding: 6px 8px;
+  background: var(--green);
+  color: #fff;
+  font: normal 700 8px/1 var(--font-inter);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
 .card:focus-visible,
+.relatedCard:focus-visible,
 .close:focus-visible,
 .thumbs button:focus-visible,
 .cta:focus-visible,
@@ -335,6 +421,7 @@
   .modal {
     grid-template-columns: 1fr;
   }
+  .relatedGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .mainImage {
     height: 52vh;
   }
@@ -389,4 +476,10 @@
   .thumbs button {
     height: 72px;
   }
+  .related { padding: 34px 12px 20px; }
+  .relatedHead { display: block; }
+  .relatedHead h3 { margin-top: 8px; }
+  .relatedGrid { gap: 8px; }
+  .relatedCopy { padding: 11px; }
+  .relatedCopy strong { font-size: 16px; }
 }
