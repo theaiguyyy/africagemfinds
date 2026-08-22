@@ -8,11 +8,11 @@ import styles from './HomePage.module.css';
 const heroStops = [
   { label: 'Aquamarine', img: '/images/Stone16-218.jpg' },
   { label: 'Aquamarine', img: '/images/Stone8-114.jpg' },
-  { label: 'Tourmaline', img: '/images/Stone22-290.jpg' },
-  { label: 'Indicolite Tourmaline', img: '/images/Stone11-149.jpg' },
-  { label: 'Aquamarine', img: '/images/Stone10-137.jpg' },
-  { label: 'Indicolite Tourmaline', img: '/images/Stone29-420.jpg' },
-  { label: 'Rubellite', img: '/images/Stone31-446.jpg' },
+  { label: 'Green Beryl', img: '/images/Stone22-290.jpg' },
+  { label: 'Ofiki Aqua', img: '/images/Stone11-149.jpg' },
+  { label: 'Blue Tourmaline', img: '/images/Stone10-137.jpg' },
+  { label: 'Tourmaline', img: '/images/Stone29-420.jpg' },
+  { label: 'Tourmaline', img: '/images/Stone31-446.jpg' },
   { label: 'Tourmaline', img: '/images/Stone30-424.jpg' },
 ];
 
@@ -344,7 +344,7 @@ export default function HomePage() {
         <div className={styles.trustGrid}>
           <div className={`${styles.trustVisual} reveal`} id="trustVisual">
             {showTrustMedia && <Image
-              src="/images/Stone34-559.jpg"
+              src="/images/about-family-inspection.jpg"
               alt="Africa Gem Finds team inspecting rough aquamarine"
               id="trustImg"
               loading="lazy"

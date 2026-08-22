@@ -216,6 +216,7 @@ export default function GalleryClient({ stones }: { stones: GalleryStone[] }) {
                   fill
                   sizes={gallerySizes.detail}
                   quality={95}
+                  unoptimized
                 />
                 <span>
                   View {imageIndex + 1} of {selected.images.length}
@@ -235,6 +236,7 @@ export default function GalleryClient({ stones }: { stones: GalleryStone[] }) {
                         alt=""
                         fill
                         sizes="160px"
+                        unoptimized
                       />
                     </button>
                   ))}
@@ -294,6 +296,7 @@ export default function GalleryClient({ stones }: { stones: GalleryStone[] }) {
                             sizes="(max-width: 700px) 46vw, (max-width: 980px) 40vw, 260px"
                             quality={95}
                             loading="lazy"
+                            unoptimized
                           />
                         </span>
                         <span className={styles.relatedCopy}>
@@ -341,6 +344,7 @@ function DeferredCardImage({ image }: { image: GalleryImage }) {
           sizes={gallerySizes.card}
           quality={95}
           loading="lazy"
+          unoptimized
         />
       )}
     </span>

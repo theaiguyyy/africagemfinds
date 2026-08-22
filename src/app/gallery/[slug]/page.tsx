@@ -46,9 +46,9 @@ export default async function GalleryStonePage({ params }: { params: Promise<{ s
         <article className={styles.stone}>
           <div className={styles.viewer}>
             <div className={styles.primary}>
-              <Image src={storageVariant(primary.url, 1600)} alt={primary.alt} fill sizes={gallerySizes.detail} quality={95} preload />
+              <Image src={storageVariant(primary.url, 1600)} alt={primary.alt} fill sizes={gallerySizes.detail} quality={95} preload unoptimized />
             </div>
-            {ordered.length > 1 && <div className={styles.alternates}>{ordered.map((image) => <div key={image.id}><Image src={storageVariant(image.url, 640)} alt={image.alt} fill sizes="(max-width: 800px) 33vw, 180px" quality={95} loading="lazy" /></div>)}</div>}
+            {ordered.length > 1 && <div className={styles.alternates}>{ordered.map((image) => <div key={image.id}><Image src={storageVariant(image.url, 640)} alt={image.alt} fill sizes="(max-width: 800px) 33vw, 180px" quality={95} loading="lazy" unoptimized /></div>)}</div>}
           </div>
           <div className={styles.details}>
             <span>{stone.family} · {stone.sku}</span>

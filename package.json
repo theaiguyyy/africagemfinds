@@ -7,6 +7,7 @@
     "founders:qr": "node scripts/generate-founder-qr.mjs",
     "gallery:manifest": "node scripts/import-gallery.mjs",
     "gallery:preview-assets": "node scripts/generate-gallery-preview-assets.mjs",
+    "storage:dedupe": "node --env-file=.env.local scripts/deduplicate-supabase-storage.mjs",
     "test": "node --experimental-strip-types --test tests/*.test.mjs",
     "dev": "next dev",
     "build": "next build",
